@@ -1,0 +1,301 @@
+[
+  {
+    "graph_name": "paper_5vertex",
+    "oracle": "dirac",
+    "n_nodes": 5,
+    "n_edges": 6,
+    "expected_chi": 3,
+    "chi": 3,
+    "valid": true,
+    "wall_seconds": 107.88,
+    "color_classes": [
+      [
+        0
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        1,
+        4
+      ]
+    ],
+    "num_colors": 3,
+    "vertices_covered": 5,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "triangle",
+    "oracle": "dirac",
+    "n_nodes": 3,
+    "n_edges": 3,
+    "expected_chi": 3,
+    "chi": 3,
+    "valid": true,
+    "wall_seconds": 12.46,
+    "color_classes": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ]
+    ],
+    "num_colors": 3,
+    "vertices_covered": 3,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "complete_k4",
+    "oracle": "dirac",
+    "n_nodes": 4,
+    "n_edges": 6,
+    "expected_chi": 4,
+    "chi": 4,
+    "valid": true,
+    "wall_seconds": 15.56,
+    "color_classes": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ]
+    ],
+    "num_colors": 4,
+    "vertices_covered": 4,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "path_p4",
+    "oracle": "dirac",
+    "n_nodes": 4,
+    "n_edges": 3,
+    "expected_chi": 2,
+    "chi": 2,
+    "valid": true,
+    "wall_seconds": 52.98,
+    "color_classes": [
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    "num_colors": 2,
+    "vertices_covered": 4,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "cycle_c5",
+    "oracle": "dirac",
+    "n_nodes": 5,
+    "n_edges": 5,
+    "expected_chi": 3,
+    "chi": 3,
+    "valid": true,
+    "wall_seconds": 86.05,
+    "color_classes": [
+      [
+        0
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "num_colors": 3,
+    "vertices_covered": 5,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "wheel_w5",
+    "oracle": "dirac",
+    "n_nodes": 6,
+    "n_edges": 10,
+    "expected_chi": 4,
+    "chi": 4,
+    "valid": true,
+    "wall_seconds": 93.8,
+    "color_classes": [
+      [
+        0
+      ],
+      [
+        1
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "num_colors": 4,
+    "vertices_covered": 6,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "ER(8,0.3)",
+    "oracle": "dirac",
+    "n_nodes": 8,
+    "n_edges": 13,
+    "expected_chi": null,
+    "chi": 3,
+    "valid": true,
+    "wall_seconds": 149.28,
+    "color_classes": [
+      [
+        2,
+        4,
+        7
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        3,
+        6
+      ]
+    ],
+    "num_colors": 3,
+    "vertices_covered": 8,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "ER(8,0.5)",
+    "oracle": "dirac",
+    "n_nodes": 8,
+    "n_edges": 16,
+    "expected_chi": null,
+    "chi": 3,
+    "valid": true,
+    "wall_seconds": 166.97,
+    "color_classes": [
+      [
+        0,
+        1,
+        6
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        4,
+        7
+      ]
+    ],
+    "num_colors": 3,
+    "vertices_covered": 8,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "ER(10,0.3)",
+    "oracle": "dirac",
+    "n_nodes": 10,
+    "n_edges": 17,
+    "expected_chi": null,
+    "chi": 4,
+    "valid": true,
+    "wall_seconds": 149.26,
+    "color_classes": [
+      [
+        9
+      ],
+      [
+        4,
+        5,
+        6,
+        7
+      ],
+      [
+        2,
+        3,
+        8
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "num_colors": 4,
+    "vertices_covered": 10,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  },
+  {
+    "graph_name": "ER(10,0.5)",
+    "oracle": "dirac",
+    "n_nodes": 10,
+    "n_edges": 21,
+    "expected_chi": null,
+    "chi": 4,
+    "valid": true,
+    "wall_seconds": 142.3,
+    "color_classes": [
+      [
+        2
+      ],
+      [
+        4,
+        5,
+        6,
+        8
+      ],
+      [
+        0,
+        1,
+        7
+      ],
+      [
+        3,
+        9
+      ]
+    ],
+    "num_colors": 4,
+    "vertices_covered": 10,
+    "missing_vertices": [],
+    "duplicate_vertices": [],
+    "edge_violations": []
+  }
+]

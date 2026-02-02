@@ -1,0 +1,58 @@
+# Editable dependency (has its own git repo)
+mis-spectral-graph-solver/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# uv
+uv.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test / plot artifacts
+plots/
+data/
+*.png
+*.jpg
+*.jpeg
+*.svg
+htmlcov/
+.coverage
+.pytest_cache/
+
+# arXiv paper reference
+arXiv-2301.02637v2/
+*.tar
+
+# Original tutorial notebook at root (copy lives in notebooks/)
+/tutorial*.ipynb
+
+# Datasets
+datasets/
+
+# Claude project config
+.claude/

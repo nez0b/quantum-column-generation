@@ -1,0 +1,36 @@
+[project]
+name = "quantum-colgen"
+version = "0.1.0"
+description = "Quantum column generation for minimum vertex graph coloring (arXiv:2301.02637)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.22,<2",
+    "scipy",
+    "networkx>=2.6,<3",
+    "matplotlib",
+    "qci-client",
+    "eqc-models",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-timeout",
+    "jupyter",
+    "nbconvert",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow",
+    "dirac: marks tests requiring QCi Dirac-3 access",
+    "pulser: marks tests requiring Pulser simulator",
+]
