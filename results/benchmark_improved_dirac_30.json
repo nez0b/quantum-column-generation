@@ -1,0 +1,72 @@
+{
+  "cg_results": [
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 9,
+      "valid": true,
+      "iterations": 48,
+      "columns": 78,
+      "wall_seconds": 0.26,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "dirac",
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 6,
+      "valid": true,
+      "iterations": 13,
+      "columns": 139,
+      "wall_seconds": 393.26,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 8,
+      "valid": true,
+      "iterations": 49,
+      "columns": 79,
+      "wall_seconds": 0.32,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "dirac",
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 7,
+      "valid": true,
+      "iterations": 15,
+      "columns": 145,
+      "wall_seconds": 406.44,
+      "converged": true,
+      "max_iterations": 500
+    }
+  ],
+  "greedy_results": [
+    {
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 6,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 7,
+      "wall_seconds": 0.0001
+    }
+  ]
+}

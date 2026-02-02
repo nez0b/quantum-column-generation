@@ -1,5 +1,6 @@
 """Classical MILP-based pricing subproblem solver."""
 
+import time
 from typing import List, Set
 
 import networkx as nx
@@ -8,6 +9,7 @@ from scipy.optimize import milp, LinearConstraint, Bounds
 from scipy.sparse import lil_matrix
 
 from .base import PricingOracle
+from ..timing import OracleTimer
 
 
 class ClassicalPricingOracle(PricingOracle):
@@ -18,6 +20,9 @@ class ClassicalPricingOracle(PricingOracle):
         s.t.      x[u] + x[v] <= 1           for all edges (u,v) in G[V']
                   x[v] in {0, 1}
     """
+
+    def __init__(self) -> None:
+        self.timer = OracleTimer()
 
     def solve(self, graph: nx.Graph, dual_vars: np.ndarray) -> List[Set[int]]:
         node_list = sorted(graph.nodes())
@@ -54,21 +59,28 @@ class ClassicalPricingOracle(PricingOracle):
             constraints = []
 
         integrality = np.ones(n_filt, dtype=int)
+
+        t0 = time.monotonic()
         result = milp(
             c=c_psp,
             constraints=constraints,
             integrality=integrality,
             bounds=Bounds(lb=0, ub=1),
         )
+        api_seconds = time.monotonic() - t0
 
         if not result.success:
+            self.timer.record(api_seconds=api_seconds)
             return []
 
         selected = [filtered_nodes[j] for j in range(n_filt) if result.x[j] > 0.5]
         if not selected:
+            self.timer.record(api_seconds=api_seconds)
             return []
 
         total_weight = sum(dual_vars[v] for v in selected)
         if total_weight > 1.0 + 1e-6:
+            self.timer.record(api_seconds=api_seconds, columns_found=1)
             return [set(selected)]
+        self.timer.record(api_seconds=api_seconds)
         return []

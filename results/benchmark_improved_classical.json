@@ -1,0 +1,166 @@
+{
+  "cg_results": [
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 9,
+      "valid": true,
+      "iterations": 48,
+      "columns": 78,
+      "wall_seconds": 0.26,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 8,
+      "valid": true,
+      "iterations": 49,
+      "columns": 79,
+      "wall_seconds": 0.32,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 11,
+      "valid": true,
+      "iterations": 189,
+      "columns": 239,
+      "wall_seconds": 16.6,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "valid": true,
+      "iterations": 137,
+      "columns": 187,
+      "wall_seconds": 12.64,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(75,0.3)",
+      "n_nodes": 75,
+      "n_edges": 804,
+      "chi": 17,
+      "valid": true,
+      "iterations": 318,
+      "columns": 393,
+      "wall_seconds": 214.75,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(75,0.5)",
+      "n_nodes": 75,
+      "n_edges": 1358,
+      "chi": 17,
+      "valid": true,
+      "iterations": 216,
+      "columns": 291,
+      "wall_seconds": 164.97,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(100,0.3)",
+      "n_nodes": 100,
+      "n_edges": 1477,
+      "chi": 26,
+      "valid": true,
+      "iterations": 432,
+      "columns": 532,
+      "wall_seconds": 1080.32,
+      "converged": true,
+      "max_iterations": 500
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(100,0.5)",
+      "n_nodes": 100,
+      "n_edges": 2449,
+      "chi": 26,
+      "valid": true,
+      "iterations": 293,
+      "columns": 393,
+      "wall_seconds": 727.59,
+      "converged": true,
+      "max_iterations": 500
+    }
+  ],
+  "greedy_results": [
+    {
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 6,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 7,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 8,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(75,0.3)",
+      "n_nodes": 75,
+      "n_edges": 804,
+      "chi": 10,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(75,0.5)",
+      "n_nodes": 75,
+      "n_edges": 1358,
+      "chi": 16,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(100,0.3)",
+      "n_nodes": 100,
+      "n_edges": 1477,
+      "chi": 12,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(100,0.5)",
+      "n_nodes": 100,
+      "n_edges": 2449,
+      "chi": 20,
+      "wall_seconds": 0.0002
+    }
+  ]
+}

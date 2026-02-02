@@ -1,0 +1,118 @@
+{
+  "cg_results": [
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 9,
+      "valid": true,
+      "iterations": 48,
+      "columns": 78,
+      "wall_seconds": 0.26,
+      "converged": true,
+      "max_iterations": 500,
+      "timing": {
+        "num_api_calls": 49,
+        "total_api_seconds": 0.16,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.0,
+        "avg_columns_per_call": 0.98,
+        "total_columns_found": 48
+      }
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 8,
+      "valid": true,
+      "iterations": 49,
+      "columns": 79,
+      "wall_seconds": 0.32,
+      "converged": true,
+      "max_iterations": 500,
+      "timing": {
+        "num_api_calls": 50,
+        "total_api_seconds": 0.22,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.0,
+        "avg_columns_per_call": 0.98,
+        "total_columns_found": 49
+      }
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 11,
+      "valid": true,
+      "iterations": 189,
+      "columns": 239,
+      "wall_seconds": 16.34,
+      "converged": true,
+      "max_iterations": 500,
+      "timing": {
+        "num_api_calls": 190,
+        "total_api_seconds": 15.26,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.08,
+        "avg_columns_per_call": 0.99,
+        "total_columns_found": 189
+      }
+    },
+    {
+      "oracle": "classical",
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "valid": true,
+      "iterations": 137,
+      "columns": 187,
+      "wall_seconds": 12.61,
+      "converged": true,
+      "max_iterations": 500,
+      "timing": {
+        "num_api_calls": 138,
+        "total_api_seconds": 11.94,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.09,
+        "avg_columns_per_call": 0.99,
+        "total_columns_found": 137
+      }
+    }
+  ],
+  "greedy_results": [
+    {
+      "graph_name": "ER(30,0.3)",
+      "n_nodes": 30,
+      "n_edges": 143,
+      "chi": 6,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(30,0.5)",
+      "n_nodes": 30,
+      "n_edges": 217,
+      "chi": 7,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 8,
+      "wall_seconds": 0.0
+    },
+    {
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "wall_seconds": 0.0001
+    }
+  ]
+}

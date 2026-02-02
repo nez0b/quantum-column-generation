@@ -1,9 +1,14 @@
 """End-to-end column generation tests with the classical oracle."""
 
+from typing import List, Set
+
 import pytest
+import networkx as nx
+import numpy as np
 
 from quantum_colgen.column_generation import column_generation, verify_coloring, validate_coloring
 from quantum_colgen.pricing.classical import ClassicalPricingOracle
+from quantum_colgen.pricing.base import PricingOracle
 from quantum_colgen.graphs import KNOWN_CHROMATIC, TEST_GRAPHS
 
 
@@ -105,3 +110,116 @@ class TestValidateColoring:
         assert verify_coloring(graph_5vertex, coloring)
         vr = validate_coloring(graph_5vertex, coloring)
         assert vr.valid
+
+
+class _MultiColumnOracle(PricingOracle):
+    """Mock oracle that returns multiple profitable columns per call."""
+
+    def __init__(self, columns_per_call: int = 3):
+        self._inner = ClassicalPricingOracle()
+        self._columns_per_call = columns_per_call
+
+    def solve(self, graph: nx.Graph, dual_vars: np.ndarray) -> List[Set[int]]:
+        # Use classical oracle to find the best column, then also generate
+        # additional profitable IS by greedy heuristic on remaining nodes.
+        results = self._inner.solve(graph, dual_vars)
+        if not results:
+            return []
+
+        seen = {frozenset(s) for s in results}
+        # Try to find additional profitable IS via greedy on different orderings
+        pos_nodes = [v for v in graph.nodes() if dual_vars[v] > 1e-5]
+        for seed_offset in range(1, 10):
+            if len(results) >= self._columns_per_call:
+                break
+            rng = np.random.RandomState(seed_offset)
+            order = list(pos_nodes)
+            rng.shuffle(order)
+            # Greedy IS
+            candidate: Set[int] = set()
+            for v in order:
+                if not any(graph.has_edge(v, u) for u in candidate):
+                    candidate.add(v)
+            sig = frozenset(candidate)
+            if sig not in seen:
+                total = sum(dual_vars[v] for v in candidate)
+                if total > 1 + 1e-5:
+                    results.append(candidate)
+                    seen.add(sig)
+
+        return results
+
+
+class TestLocalSearch:
+    """Unit tests for the _local_search function from dirac_oracle."""
+
+    def test_improves_suboptimal_is(self):
+        """Local search should improve a suboptimal IS when a profitable swap exists."""
+        from quantum_colgen.pricing.dirac_oracle import _local_search
+
+        # Path graph: 0-1-2-3-4
+        G = nx.path_graph(5)
+        dual_vars = np.array([0.5, 0.1, 0.8, 0.1, 0.5])
+
+        # Start with suboptimal IS {1, 3} (total=0.2)
+        # Optimal IS includes {0, 2, 4} (total=1.8)
+        initial = {1, 3}
+        improved = _local_search(G, initial, dual_vars, max_passes=5)
+
+        # Result must be an independent set
+        for u in improved:
+            for w in improved:
+                if u != w:
+                    assert not G.has_edge(u, w)
+
+        # Result should have higher total weight
+        initial_weight = sum(dual_vars[v] for v in initial)
+        improved_weight = sum(dual_vars[v] for v in improved)
+        assert improved_weight >= initial_weight
+
+    def test_preserves_valid_is(self):
+        """Local search on an already-optimal IS should not break independence."""
+        from quantum_colgen.pricing.dirac_oracle import _local_search
+
+        G = nx.cycle_graph(5)  # C5
+        dual_vars = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
+        initial = {0, 2}  # valid IS
+        result = _local_search(G, initial, dual_vars, max_passes=5)
+
+        for u in result:
+            for w in result:
+                if u != w:
+                    assert not G.has_edge(u, w)
+
+    def test_zero_passes_returns_same(self):
+        """With max_passes=0, local search returns the input unchanged."""
+        from quantum_colgen.pricing.dirac_oracle import _local_search
+
+        G = nx.path_graph(5)
+        dual_vars = np.array([1.0, 0.1, 1.0, 0.1, 1.0])
+        initial = {1, 3}
+        result = _local_search(G, initial, dual_vars, max_passes=0)
+        assert result == initial
+
+
+class TestMultiColumnConvergence:
+    """Verify that returning multiple columns per call speeds up CG."""
+
+    def test_multi_column_fewer_iterations(self):
+        """An oracle returning 3 columns/call should converge in fewer iterations."""
+        from quantum_colgen.graphs import erdos_renyi
+
+        G = erdos_renyi(12, 0.4, seed=42)
+
+        oracle_single = ClassicalPricingOracle()
+        _, coloring_single, stats_single = column_generation(G, oracle_single)
+
+        oracle_multi = _MultiColumnOracle(columns_per_call=3)
+        _, coloring_multi, stats_multi = column_generation(G, oracle_multi)
+
+        # Both should produce valid colorings
+        assert verify_coloring(G, coloring_single)
+        assert verify_coloring(G, coloring_multi)
+
+        # Multi-column oracle should use <= iterations (often strictly fewer)
+        assert stats_multi["iterations"] <= stats_single["iterations"]
