@@ -16,6 +16,8 @@ def column_generation(
     max_iterations: int = 500,
     tolerance: float = 1e-6,
     verbose: bool = False,
+    ilp_solver: str = "highs",
+    ilp_time_limit: Optional[int] = None,
 ) -> Tuple[Optional[int], List[FrozenSet[int]], Dict[str, Any]]:
     """Run column generation for minimum vertex coloring.
 
@@ -26,6 +28,8 @@ def column_generation(
         tolerance: Convergence tolerance (unused directly; profitability
             is checked inside the oracle).
         verbose: Print iteration details.
+        ilp_solver: Solver for final ILP ("highs" or "hexaly").
+        ilp_time_limit: Optional time limit for final ILP in seconds.
 
     Returns:
         (chromatic_number, coloring_as_frozensets, stats_dict)
@@ -84,7 +88,9 @@ def column_generation(
     stats["columns_generated"] = len(columns)
 
     # Final ILP
-    num_colors, selected_indices = solve_final_ilp(columns, num_vertices)
+    num_colors, selected_indices = solve_final_ilp(
+        columns, num_vertices, solver=ilp_solver, time_limit=ilp_time_limit
+    )
     if num_colors is None:
         return None, [], stats
 

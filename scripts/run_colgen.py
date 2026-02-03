@@ -42,6 +42,10 @@ def main():
     parser.add_argument("--relax-schedule", type=int, default=2, choices=[1, 2, 3, 4])
     parser.add_argument("--method", default="gibbons", choices=["gibbons", "filter"],
                         help="Dirac method (default: gibbons)")
+    parser.add_argument("--ilp-solver", choices=["highs", "hexaly"], default="highs",
+                        help="ILP solver for final set-cover (default: highs)")
+    parser.add_argument("--ilp-time-limit", type=int, default=None,
+                        help="ILP time limit in seconds (returns best found if reached)")
 
     args = parser.parse_args()
 
@@ -63,7 +67,8 @@ def main():
             expected = KNOWN_CHROMATIC[name]
             oracle = _make_oracle(args.oracle, **oracle_kwargs)
             num_colors, coloring, stats = column_generation(
-                G, oracle, verbose=args.verbose
+                G, oracle, verbose=args.verbose,
+                ilp_solver=args.ilp_solver, ilp_time_limit=args.ilp_time_limit
             )
             valid = verify_coloring(G, coloring) if coloring else False
             status = "PASS" if (num_colors == expected and valid) else "FAIL"
@@ -81,7 +86,8 @@ def main():
               f"{G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
         oracle = _make_oracle(args.oracle, **oracle_kwargs)
         num_colors, coloring, stats = column_generation(
-            G, oracle, verbose=args.verbose
+            G, oracle, verbose=args.verbose,
+            ilp_solver=args.ilp_solver, ilp_time_limit=args.ilp_time_limit
         )
         valid = verify_coloring(G, coloring) if coloring else False
         print(f"Result: {num_colors} colors, valid={valid}")

@@ -32,6 +32,10 @@ uv run pytest tests/pulser/ -v              # Requires separate pulser venv
 uv run python scripts/run_colgen.py --test --oracle classical --verbose
 uv run python scripts/run_colgen.py --test --oracle dirac --verbose
 uv run python scripts/run_colgen.py --oracle classical --nodes 12 --edge-prob 0.5
+
+# With Hexaly ILP solver (requires Hexaly setup, see below)
+uv run python scripts/run_colgen.py --test --oracle classical --ilp-solver hexaly
+uv run python scripts/run_colgen.py --oracle classical --nodes 50 --ilp-solver hexaly --ilp-time-limit 300
 ```
 
 ## Run benchmarks
@@ -64,6 +68,35 @@ uv run python scripts/validate_results.py --summary results/colorings.json
 
 Results are saved to `results/` as JSON files.
 
+## Hexaly optimizer setup (optional)
+
+Hexaly is an alternative ILP solver for the final set-cover phase. It can handle larger
+problems and supports time limits with best-found solutions.
+
+**Installation:**
+1. Download Hexaly from https://www.hexaly.com/ (requires license)
+2. Install to `/opt/hexaly_14_5/` (or similar)
+3. Place license file at `/opt/hexaly_14_5/license.dat`
+
+**Environment setup (required each session):**
+```bash
+export PYTHONPATH=/opt/hexaly_14_5/bin/python:$PYTHONPATH
+export DYLD_LIBRARY_PATH=/opt/hexaly_14_5/bin:$DYLD_LIBRARY_PATH  # macOS
+# export LD_LIBRARY_PATH=/opt/hexaly_14_5/bin:$LD_LIBRARY_PATH    # Linux
+```
+
+**Usage:**
+```bash
+# Use Hexaly for final ILP
+uv run python scripts/run_colgen.py --oracle classical --nodes 100 --ilp-solver hexaly
+
+# With time limit (returns best found within budget)
+uv run python scripts/run_colgen.py --oracle classical --nodes 200 --ilp-solver hexaly --ilp-time-limit 300
+
+# Benchmark HiGHS vs Hexaly
+uv run python scripts/benchmark_ilp_solvers.py --er-sizes 30 50 75 100 --time-limit 300
+```
+
 ## Project layout
 
 ```
@@ -80,13 +113,14 @@ src/quantum_colgen/
         dirac_oracle.py        # QCi Dirac-3 MWIS — multi-sample, multi-threshold,
                                #   local search, returns multiple columns per call
 tests/
-    unit/                      # Classical-only tests (30 tests)
+    unit/                      # Classical-only tests (39 tests)
     pulser/                    # @pytest.mark.pulser
     dirac/                     # @pytest.mark.dirac (needs QCI_TOKEN, 7 tests)
 scripts/
     run_colgen.py              # CLI entry point
     benchmark.py               # Dirac vs classical benchmark (original)
     benchmark_improved.py      # Improved benchmark: CG vs greedy with timing breakdown
+    benchmark_ilp_solvers.py   # HiGHS vs Hexaly ILP solver comparison
     validate_results.py        # Coloring validation + solution export
 results/                       # Benchmark JSON output
 notebooks/                     # Tutorial notebook
@@ -103,6 +137,8 @@ mis-spectral-graph-solver/     # Editable dep (excluded from git)
   Use separate venvs or install only one at a time.
 - Environment is pinned to `numpy<2, networkx<3` for eqc-models compatibility.
 - Default `max_iterations=500` in column_generation(); 50 is insufficient for n>25.
+- Final ILP supports two solvers: `highs` (default, via scipy) and `hexaly` (optional).
+  Use `--ilp-solver hexaly --ilp-time-limit N` for large problems where HiGHS is slow.
 
 ## Dirac oracle improvements
 

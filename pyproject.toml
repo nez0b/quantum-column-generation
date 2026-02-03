@@ -19,6 +19,8 @@ dev = [
     "jupyter",
     "nbconvert",
 ]
+# Hexaly requires separate installation from hexaly.com
+# Install manually: pip install hexaly (requires license)
 
 [build-system]
 requires = ["setuptools>=68.0"]
