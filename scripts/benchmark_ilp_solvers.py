@@ -49,6 +49,18 @@ class CGPrepResult:
     cg_iterations: int
 
 
+@dataclass
+class GreedyCoverResult:
+    """Greedy set-cover result over restricted columns."""
+    graph_name: str
+    n_nodes: int
+    n_edges: int
+    num_columns: int
+    chi: Optional[int]
+    valid: bool
+    wall_seconds: float
+
+
 def _run_cg_only(
     graph: nx.Graph,
     graph_name: str,
@@ -144,6 +156,69 @@ def _benchmark_ilp_solver(
     )
 
 
+def _greedy_set_cover(
+    columns: List,
+    num_vertices: int,
+    graph: nx.Graph,
+    graph_name: str,
+) -> GreedyCoverResult:
+    """Greedy set-cover on restricted columns.
+
+    Uses a simple largest-coverage heuristic to select columns until all
+    vertices are covered. Ties are broken by column size then index order.
+    """
+    t0 = time.time()
+    remaining = set(range(num_vertices))
+    selected = []
+
+    # Precompute column sets as Python sets for speed
+    col_sets = [set(c) for c in columns]
+
+    while remaining:
+        best_idx = None
+        best_cover = set()
+
+        for idx, col in enumerate(col_sets):
+            cover = col & remaining
+            if not cover:
+                continue
+            if best_idx is None:
+                best_idx = idx
+                best_cover = cover
+                continue
+            if len(cover) > len(best_cover):
+                best_idx = idx
+                best_cover = cover
+            elif len(cover) == len(best_cover) and len(col) > len(col_sets[best_idx]):
+                best_idx = idx
+
+        if best_idx is None:
+            # No column can cover remaining vertices -> infeasible
+            break
+
+        selected.append(best_idx)
+        remaining -= best_cover
+
+    elapsed = time.time() - t0
+
+    valid = False
+    chi = None
+    if not remaining:
+        chi = len(selected)
+        coloring = [columns[i] for i in selected]
+        valid = verify_coloring(graph, coloring)
+
+    return GreedyCoverResult(
+        graph_name=graph_name,
+        n_nodes=graph.number_of_nodes(),
+        n_edges=graph.number_of_edges(),
+        num_columns=len(columns),
+        chi=chi,
+        valid=valid,
+        wall_seconds=round(elapsed, 4),
+    )
+
+
 def build_catalogue(
     er_sizes: List[int],
     er_probs: List[float],
@@ -164,19 +239,22 @@ def build_catalogue(
 def print_results_table(
     cg_results: List[CGPrepResult],
     ilp_results: List[ILPBenchmarkResult],
+    greedy_results: List[GreedyCoverResult],
 ):
     """Print comparison table."""
     # Index ILP results by (graph_name, solver)
     ilp_by_key = {(r.graph_name, r.solver): r for r in ilp_results}
     cg_by_name = {r.graph_name: r for r in cg_results}
+    greedy_by_name = {r.graph_name: r for r in greedy_results}
 
     print("\n## ILP Solver Benchmark Results")
-    print("| Graph | n | m | Columns | CG(s) | HiGHS chi | HiGHS(s) | Hexaly chi | Hexaly(s) | Match |")
-    print("|-------|---|---|---------|-------|-----------|----------|------------|-----------|-------|")
+    print("| Graph | n | m | Columns | CG(s) | Greedy chi | Greedy(s) | HiGHS chi | HiGHS(s) | Hexaly chi | Hexaly(s) | Match |")
+    print("|-------|---|---|---------|-------|------------|----------|-----------|----------|------------|-----------|-------|")
 
     for cg in cg_results:
         highs = ilp_by_key.get((cg.graph_name, "highs"))
         hexaly = ilp_by_key.get((cg.graph_name, "hexaly"))
+        greedy = greedy_by_name.get(cg.graph_name)
 
         highs_chi = str(highs.chi) if highs and highs.chi else "-"
         highs_time = f"{highs.ilp_seconds}" if highs else "-"
@@ -188,6 +266,9 @@ def print_results_table(
         if hexaly and hexaly.timed_out:
             hexaly_time += "*"
 
+        greedy_chi = str(greedy.chi) if greedy and greedy.chi is not None else "-"
+        greedy_time = f"{greedy.wall_seconds}" if greedy else "-"
+
         # Check if results match
         match = "-"
         if highs and hexaly and highs.chi is not None and hexaly.chi is not None:
@@ -196,6 +277,7 @@ def print_results_table(
         print(
             f"| {cg.graph_name:<16} | {cg.n_nodes:>3} | {cg.n_edges:>5} "
             f"| {cg.num_columns:>7} | {cg.cg_seconds:>5.1f} "
+            f"| {greedy_chi:>10} | {greedy_time:>8} "
             f"| {highs_chi:>9} | {highs_time:>8} "
             f"| {hexaly_chi:>10} | {hexaly_time:>9} | {match:>5} |"
         )
@@ -285,6 +367,7 @@ def main():
 
     all_cg: List[CGPrepResult] = []
     all_ilp: List[ILPBenchmarkResult] = []
+    all_greedy: List[GreedyCoverResult] = []
 
     total = len(catalogue)
     for idx, (gname, G) in enumerate(catalogue, 1):
@@ -309,9 +392,14 @@ def main():
         all_cg.append(cg_result)
         print(f"    Generated {len(columns)} columns in {cg_elapsed:.2f}s ({cg_iters} iterations)")
 
-        # Phase 2: Benchmark ILP solvers
+        # Phase 2: Greedy set-cover over restricted columns
+        greedy = _greedy_set_cover(columns, num_vertices, G, gname)
+        all_greedy.append(greedy)
+        print(f"  Greedy (restricted): chi={greedy.chi}  time={greedy.wall_seconds}s")
+
+        # Phase 3: Benchmark ILP solvers
         for solver in solvers:
-            print(f"  Phase 2: Solving ILP with {solver} ...", flush=True)
+            print(f"  Phase 3: Solving ILP with {solver} ...", flush=True)
             result = _benchmark_ilp_solver(
                 columns, num_vertices, G, gname, solver,
                 time_limit=args.time_limit,
@@ -326,7 +414,7 @@ def main():
 
     # Summary tables
     print("\n\n" + "=" * 80)
-    print_results_table(all_cg, all_ilp)
+    print_results_table(all_cg, all_ilp, all_greedy)
 
     if "highs" in solvers and "hexaly" in solvers:
         print_speedup_table(all_cg, all_ilp)
@@ -336,6 +424,7 @@ def main():
         output = {
             "cg_results": [asdict(r) for r in all_cg],
             "ilp_results": [asdict(r) for r in all_ilp],
+            "greedy_results": [asdict(r) for r in all_greedy],
             "config": {
                 "er_sizes": args.er_sizes,
                 "er_probs": args.er_probs,

@@ -275,6 +275,7 @@ def main():
     parser.add_argument("--max-iterations", type=int, default=500)
     parser.add_argument("--json", type=str, default=None, help="Save results to JSON")
     parser.add_argument("--classical-only", action="store_true", help="Skip Dirac runs")
+    parser.add_argument("--dirac-only", action="store_true", help="Skip classical CG runs")
     parser.add_argument("--dirac", action="store_true", help="Include Dirac runs")
     parser.add_argument("--num-samples", type=int, default=100)
     parser.add_argument("--relax-schedule", type=int, default=2, choices=[1, 2, 3, 4])
@@ -290,10 +291,13 @@ def main():
 
     catalogue = build_catalogue(args.er_sizes, args.er_probs, seed=args.seed)
 
-    oracles = ["classical"]
-    if args.dirac and not args.classical_only:
-        oracles.append("dirac")
+    if args.dirac_only:
+        oracles = ["dirac"]
     elif args.classical_only:
+        oracles = ["classical"]
+    elif args.dirac:
+        oracles = ["classical", "dirac"]
+    else:
         oracles = ["classical"]
 
     all_cg: List[RunResult] = []
