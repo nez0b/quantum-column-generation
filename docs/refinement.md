@@ -184,6 +184,8 @@ pruning and local search as the Dirac oracle.
 
 ### Chi Quality Comparison (ER graphs, seed=42)
 
+#### Small graphs (20-40 nodes)
+
 | Graph | Greedy | MILP | LP | Dirac |
 |-------|--------|------|-----|-------|
 | ER(20,0.3) | **5** | 6 | 6 | - |
@@ -193,14 +195,39 @@ pruning and local search as the Dirac oracle.
 | ER(40,0.3) | 8 | 8 | 9 | - |
 | ER(40,0.5) | 11 | 10 | **9** | - |
 
+#### Large graphs (50-100 nodes)
+
+| Graph | Greedy | MILP | LP | MILP gap | LP gap |
+|-------|--------|------|-----|----------|--------|
+| ER(50,0.3) | **8** | 11 | 9 | +3 | +1 |
+| ER(50,0.5) | 11 | 11 | 11 | 0 | 0 |
+| ER(75,0.3) | **10** | 17 | 16 | +7 | +6 |
+| ER(75,0.5) | 16 | 17 | **15** | +1 | **-1** ✓ |
+| ER(100,0.3) | **12** | 26 | 23 | **+14** | +11 |
+| ER(100,0.5) | **20** | 26 | 21 | +6 | +1 |
+
+**Key finding**: MILP degrades catastrophically on large sparse graphs. ER(100,0.3) gets
+chi=26 vs greedy's chi=12 — more than 2x worse! LP is consistently better.
+
 ### Extraction Efficiency (columns per API call)
 
 | Graph | MILP | LP | Dirac |
 |-------|------|-----|-------|
 | ER(30,0.3) | 1.0 | 12.8 | **30.1** |
 | ER(30,0.5) | 1.0 | 9.1 | 9.1 |
-| ER(40,0.3) | 1.0 | 9.4 | - |
-| ER(40,0.5) | 1.0 | 8.7 | - |
+| ER(50,0.3) | 1.0 | 9.1 | - |
+| ER(75,0.3) | 1.0 | 13.6 | - |
+| ER(100,0.3) | 1.0 | 12.8 | - |
+| ER(100,0.5) | 1.0 | 13.9 | - |
+
+### Iteration Efficiency (large graphs)
+
+| Graph | MILP iters | LP iters | Reduction |
+|-------|------------|----------|-----------|
+| ER(50,0.3) | 189 | 37 | **5.1x fewer** |
+| ER(75,0.3) | 318 | 38 | **8.4x fewer** |
+| ER(100,0.3) | 432 | 66 | **6.5x fewer** |
+| ER(100,0.5) | 293 | 41 | **7.1x fewer** |
 
 ### Time Comparison
 
@@ -208,8 +235,9 @@ pruning and local search as the Dirac oracle.
 |-------|------|-----|-------|
 | ER(30,0.3) | 0.27s | **0.11s** | 5068s |
 | ER(30,0.5) | 0.30s | **0.06s** | 493s |
-| ER(40,0.3) | 5.06s | **0.45s** | - |
-| ER(40,0.5) | 2.80s | **0.31s** | - |
+| ER(50,0.3) | 16.0s | **1.8s** | - |
+| ER(75,0.3) | 216.5s | **89.4s** | - |
+| ER(100,0.3) | 1096.3s | **822.5s** | - |
 
 ### Key Findings
 

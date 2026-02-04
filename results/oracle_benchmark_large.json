@@ -1,0 +1,288 @@
+{
+  "cg_results": [
+    {
+      "oracle": "milp",
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 11,
+      "valid": true,
+      "iterations": 189,
+      "columns": 239,
+      "wall_seconds": 16.01,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 190,
+        "total_api_seconds": 14.95,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.08,
+        "avg_columns_per_call": 0.99,
+        "total_columns_found": 189
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 9,
+      "valid": true,
+      "iterations": 37,
+      "columns": 396,
+      "wall_seconds": 1.77,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 38,
+        "total_api_seconds": 0.06,
+        "total_extract_seconds": 0.1084,
+        "avg_api_seconds": 0.0,
+        "avg_columns_per_call": 9.11,
+        "total_columns_found": 346
+      }
+    },
+    {
+      "oracle": "milp",
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "valid": true,
+      "iterations": 137,
+      "columns": 187,
+      "wall_seconds": 12.33,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 138,
+        "total_api_seconds": 11.68,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.08,
+        "avg_columns_per_call": 0.99,
+        "total_columns_found": 137
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "valid": true,
+      "iterations": 23,
+      "columns": 256,
+      "wall_seconds": 1.16,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 24,
+        "total_api_seconds": 0.05,
+        "total_extract_seconds": 0.0589,
+        "avg_api_seconds": 0.0,
+        "avg_columns_per_call": 8.58,
+        "total_columns_found": 206
+      }
+    },
+    {
+      "oracle": "milp",
+      "graph_name": "ER(75,0.3)",
+      "n_nodes": 75,
+      "n_edges": 804,
+      "chi": 17,
+      "valid": true,
+      "iterations": 318,
+      "columns": 393,
+      "wall_seconds": 216.48,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 319,
+        "total_api_seconds": 202.28,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.63,
+        "avg_columns_per_call": 1.0,
+        "total_columns_found": 318
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(75,0.3)",
+      "n_nodes": 75,
+      "n_edges": 804,
+      "chi": 16,
+      "valid": true,
+      "iterations": 38,
+      "columns": 606,
+      "wall_seconds": 89.44,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 39,
+        "total_api_seconds": 0.13,
+        "total_extract_seconds": 0.1972,
+        "avg_api_seconds": 0.0,
+        "avg_columns_per_call": 13.62,
+        "total_columns_found": 531
+      }
+    },
+    {
+      "oracle": "milp",
+      "graph_name": "ER(75,0.5)",
+      "n_nodes": 75,
+      "n_edges": 1358,
+      "chi": 17,
+      "valid": true,
+      "iterations": 216,
+      "columns": 291,
+      "wall_seconds": 167.47,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 217,
+        "total_api_seconds": 160.06,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 0.74,
+        "avg_columns_per_call": 1.0,
+        "total_columns_found": 216
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(75,0.5)",
+      "n_nodes": 75,
+      "n_edges": 1358,
+      "chi": 15,
+      "valid": true,
+      "iterations": 46,
+      "columns": 487,
+      "wall_seconds": 61.81,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 47,
+        "total_api_seconds": 0.25,
+        "total_extract_seconds": 0.1944,
+        "avg_api_seconds": 0.01,
+        "avg_columns_per_call": 8.77,
+        "total_columns_found": 412
+      }
+    },
+    {
+      "oracle": "milp",
+      "graph_name": "ER(100,0.3)",
+      "n_nodes": 100,
+      "n_edges": 1477,
+      "chi": 26,
+      "valid": true,
+      "iterations": 432,
+      "columns": 532,
+      "wall_seconds": 1096.33,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 433,
+        "total_api_seconds": 1007.54,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 2.33,
+        "avg_columns_per_call": 1.0,
+        "total_columns_found": 432
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(100,0.3)",
+      "n_nodes": 100,
+      "n_edges": 1477,
+      "chi": 23,
+      "valid": true,
+      "iterations": 66,
+      "columns": 954,
+      "wall_seconds": 822.47,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 67,
+        "total_api_seconds": 0.41,
+        "total_extract_seconds": 0.5154,
+        "avg_api_seconds": 0.01,
+        "avg_columns_per_call": 12.75,
+        "total_columns_found": 854
+      }
+    },
+    {
+      "oracle": "milp",
+      "graph_name": "ER(100,0.5)",
+      "n_nodes": 100,
+      "n_edges": 2449,
+      "chi": 26,
+      "valid": true,
+      "iterations": 293,
+      "columns": 393,
+      "wall_seconds": 735.3,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 294,
+        "total_api_seconds": 660.73,
+        "total_extract_seconds": 0.0,
+        "avg_api_seconds": 2.25,
+        "avg_columns_per_call": 1.0,
+        "total_columns_found": 293
+      }
+    },
+    {
+      "oracle": "lp",
+      "graph_name": "ER(100,0.5)",
+      "n_nodes": 100,
+      "n_edges": 2449,
+      "chi": 21,
+      "valid": true,
+      "iterations": 41,
+      "columns": 686,
+      "wall_seconds": 1337.37,
+      "converged": true,
+      "timing": {
+        "num_api_calls": 42,
+        "total_api_seconds": 0.41,
+        "total_extract_seconds": 0.2499,
+        "avg_api_seconds": 0.01,
+        "avg_columns_per_call": 13.95,
+        "total_columns_found": 586
+      }
+    }
+  ],
+  "greedy_results": [
+    {
+      "graph_name": "ER(50,0.3)",
+      "n_nodes": 50,
+      "n_edges": 368,
+      "chi": 8,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(50,0.5)",
+      "n_nodes": 50,
+      "n_edges": 596,
+      "chi": 11,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(75,0.3)",
+      "n_nodes": 75,
+      "n_edges": 804,
+      "chi": 10,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(75,0.5)",
+      "n_nodes": 75,
+      "n_edges": 1358,
+      "chi": 16,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(100,0.3)",
+      "n_nodes": 100,
+      "n_edges": 1477,
+      "chi": 12,
+      "wall_seconds": 0.0001
+    },
+    {
+      "graph_name": "ER(100,0.5)",
+      "n_nodes": 100,
+      "n_edges": 2449,
+      "chi": 20,
+      "wall_seconds": 0.0002
+    }
+  ]
+}
