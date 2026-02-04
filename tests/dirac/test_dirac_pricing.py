@@ -111,3 +111,75 @@ class TestDiracPricingOracle:
         for col in cols:
             total = sum(duals[v] for v in col)
             assert total > 1.0
+
+    def test_multi_prune_extracts_more_columns(self):
+        """Multi-prune option should extract at least as many columns as baseline."""
+        G = paper_5vertex()
+        duals = np.array([0.6, 0.4, 0.4, 0.6, 0.6])
+
+        oracle_base = DiracPricingOracle(
+            method="gibbons", num_samples=50, relax_schedule=2,
+            multi_prune=False,
+        )
+        oracle_multi = DiracPricingOracle(
+            method="gibbons", num_samples=50, relax_schedule=2,
+            multi_prune=True,
+            num_random_prune_trials=3,
+        )
+
+        cols_base = oracle_base.solve(G, duals)
+        cols_multi = oracle_multi.solve(G, duals)
+
+        # Both should produce valid independent sets
+        for col in cols_multi:
+            for u in col:
+                for w in col:
+                    if u != w:
+                        assert not G.has_edge(u, w)
+
+        # Multi-prune should find at least as many columns
+        assert len(cols_multi) >= len(cols_base)
+
+    def test_randomized_rounding_produces_valid_is(self):
+        """Randomized rounding extraction produces valid independent sets."""
+        G = paper_5vertex()
+        oracle = DiracPricingOracle(
+            method="gibbons", num_samples=50, relax_schedule=2,
+            randomized_rounding=True,
+            num_random_rounds=10,
+            random_seed=42,
+        )
+        duals = np.array([0.6, 0.4, 0.4, 0.6, 0.6])
+        cols = oracle.solve(G, duals)
+
+        # All columns must be valid independent sets
+        for col in cols:
+            total = sum(duals[v] for v in col)
+            assert total > 1.0
+            for u in col:
+                for w in col:
+                    if u != w:
+                        assert not G.has_edge(u, w)
+
+    def test_combined_extraction_options(self):
+        """Multi-prune + randomized rounding together produce valid columns."""
+        G = paper_5vertex()
+        oracle = DiracPricingOracle(
+            method="gibbons", num_samples=50, relax_schedule=2,
+            multi_prune=True,
+            num_random_prune_trials=2,
+            randomized_rounding=True,
+            num_random_rounds=5,
+            random_seed=42,
+        )
+        duals = np.array([0.6, 0.4, 0.4, 0.6, 0.6])
+        cols = oracle.solve(G, duals)
+
+        # All columns must be valid independent sets
+        for col in cols:
+            total = sum(duals[v] for v in col)
+            assert total > 1.0
+            for u in col:
+                for w in col:
+                    if u != w:
+                        assert not G.has_edge(u, w)

@@ -109,19 +109,25 @@ src/quantum_colgen/
     pricing/
         base.py                # Abstract PricingOracle
         classical.py           # Exact MILP MWIS (instrumented with OracleTimer)
+        classical_lp.py        # LP relaxation MWIS + extraction (fast, multi-column)
         pulser_oracle.py       # Neutral-atom (Pulser) MWIS
         dirac_oracle.py        # QCi Dirac-3 MWIS — multi-sample, multi-threshold,
                                #   local search, returns multiple columns per call
 tests/
     unit/                      # Classical-only tests (39 tests)
     pulser/                    # @pytest.mark.pulser
-    dirac/                     # @pytest.mark.dirac (needs QCI_TOKEN, 7 tests)
+    dirac/                     # @pytest.mark.dirac (needs QCI_TOKEN, 10 tests)
 scripts/
     run_colgen.py              # CLI entry point
     benchmark.py               # Dirac vs classical benchmark (original)
     benchmark_improved.py      # Improved benchmark: CG vs greedy with timing breakdown
     benchmark_ilp_solvers.py   # HiGHS vs Hexaly ILP solver comparison
+    benchmark_oracles.py       # MILP vs LP vs Dirac oracle comparison
     validate_results.py        # Coloring validation + solution export
+    dirac_extraction_experiments.py  # Extraction strategy experiments
+    test_enhanced_extraction_chi.py  # Test enhanced extraction impact on chi
+docs/
+    refinement.md              # Dirac IS extraction refinement experiments
 results/                       # Benchmark JSON output
 notebooks/                     # Tutorial notebook
 mis-spectral-graph-solver/     # Editable dep (excluded from git)
@@ -140,6 +146,20 @@ mis-spectral-graph-solver/     # Editable dep (excluded from git)
 - Final ILP supports two solvers: `highs` (default, via scipy) and `hexaly` (optional).
   Use `--ilp-solver hexaly --ilp-time-limit N` for large problems where HiGHS is slow.
 
+## Pricing oracles comparison
+
+Three pricing oracles are available:
+
+| Oracle | Method | Complexity | Cols/call | Best for |
+|--------|--------|------------|-----------|----------|
+| `ClassicalPricingOracle` | Exact MILP | NP-hard | 1 | Small graphs only |
+| `ClassicalLPPricingOracle` | LP relaxation + extraction | Polynomial | 10-15 | Fast classical baseline |
+| `DiracPricingOracle` | Motzkin-Straus QP + extraction | Polynomial + quantum | 20-30 | Best chi quality |
+
+**Key insight**: More columns per call = better final chi. The LP and Dirac oracles
+generate 10-30x more columns than exact MILP, leading to better colorings despite
+being "approximate". See `docs/refinement.md` for benchmark results.
+
 ## Dirac oracle improvements
 
 The Dirac pricing oracle uses several techniques to maximize column yield per API call:
@@ -152,6 +172,30 @@ The Dirac pricing oracle uses several techniques to maximize column yield per AP
 - **Multiple columns per call**: returns all unique profitable IS found across all
   (sample, threshold) combinations, typically 5-7 columns per Dirac API call.
 - **Backward compatibility**: `support_threshold` (singular) still accepted.
+
+### Enhanced extraction options (see docs/refinement.md)
+
+These options can **3-4x** the number of unique columns extracted per Dirac API call:
+
+- **`multi_prune=True`**: Try multiple pruning strategies (dual-descending, dual-ascending,
+  random) on each support set. Different pruning orders yield different independent sets.
+  Configure with `num_random_prune_trials` (default 3).
+
+- **`randomized_rounding=True`**: Probabilistic node inclusion based on Dirac solution values.
+  Explores more of the IS space than deterministic thresholding. Configure with
+  `num_random_rounds` (default 10) and `random_seed` for reproducibility.
+
+Example usage:
+```python
+oracle = DiracPricingOracle(
+    method="gibbons",
+    num_samples=100,
+    multi_prune=True,          # ~2x more columns
+    randomized_rounding=True,  # ~3-4x more columns
+    num_random_rounds=10,
+    random_seed=42,
+)
+```
 
 ## Git conventions
 

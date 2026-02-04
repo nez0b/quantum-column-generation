@@ -1,7 +1,8 @@
 """QCi Dirac-3 quantum annealing pricing oracle for MWIS."""
 
+import random
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import networkx as nx
 import numpy as np
@@ -112,6 +113,51 @@ def _local_search(
     return improved
 
 
+# ---------------------------------------------------------------------------
+# Pruning strategies for multi-prune extraction
+# ---------------------------------------------------------------------------
+
+def _greedy_prune_dual_desc(
+    support: Set[int],
+    graph: nx.Graph,
+    dual_vars: np.ndarray,
+) -> Set[int]:
+    """Greedy prune: highest dual weight first (baseline)."""
+    pruned: Set[int] = set()
+    for v in sorted(support, key=lambda v: dual_vars[v], reverse=True):
+        if not any(graph.has_edge(v, u) for u in pruned):
+            pruned.add(v)
+    return pruned
+
+
+def _greedy_prune_dual_asc(
+    support: Set[int],
+    graph: nx.Graph,
+    dual_vars: np.ndarray,
+) -> Set[int]:
+    """Greedy prune: lowest dual weight first (yields different IS)."""
+    pruned: Set[int] = set()
+    for v in sorted(support, key=lambda v: dual_vars[v], reverse=False):
+        if not any(graph.has_edge(v, u) for u in pruned):
+            pruned.add(v)
+    return pruned
+
+
+def _greedy_prune_random(
+    support: Set[int],
+    graph: nx.Graph,
+    rng: random.Random,
+) -> Set[int]:
+    """Greedy prune: random order."""
+    nodes = list(support)
+    rng.shuffle(nodes)
+    pruned: Set[int] = set()
+    for v in nodes:
+        if not any(graph.has_edge(v, u) for u in pruned):
+            pruned.add(v)
+    return pruned
+
+
 class DiracPricingOracle(PricingOracle):
     """Pricing oracle using QCi's Dirac-3 quantum annealing.
 
@@ -124,6 +170,12 @@ class DiracPricingOracle(PricingOracle):
     **Approach B — Gibbons weighted (``method='gibbons'``)**
       Build the Gibbons weighted Motzkin-Straus matrix with dual weights,
       submit the QP to Dirac, and extract the MWIS from the support.
+
+    **Extraction enhancements** (see docs/refinement.md):
+      - ``multi_prune=True``: Try multiple pruning orders (dual-desc, dual-asc,
+        random) to extract more unique IS from each (solution, threshold) pair.
+      - ``randomized_rounding=True``: Probabilistic node inclusion based on
+        solution values, exploring more of the IS space.
     """
 
     def __init__(
@@ -136,6 +188,11 @@ class DiracPricingOracle(PricingOracle):
         support_threshold: Optional[float] = None,
         support_thresholds: Optional[List[float]] = None,
         local_search_passes: int = 5,
+        multi_prune: bool = False,
+        num_random_prune_trials: int = 3,
+        randomized_rounding: bool = False,
+        num_random_rounds: int = 10,
+        random_seed: Optional[int] = None,
     ):
         if not DIRAC_AVAILABLE:
             raise ImportError(
@@ -147,6 +204,17 @@ class DiracPricingOracle(PricingOracle):
         self.sum_constraint = sum_constraint
         self.solution_precision = solution_precision
         self.local_search_passes = local_search_passes
+
+        # Multi-prune: use multiple pruning strategies per (solution, threshold)
+        self.multi_prune = multi_prune
+        self.num_random_prune_trials = num_random_prune_trials
+
+        # Randomized rounding: probabilistic extraction
+        self.randomized_rounding = randomized_rounding
+        self.num_random_rounds = num_random_rounds
+
+        # RNG for reproducibility
+        self._rng = random.Random(random_seed)
 
         self.timer = OracleTimer()
 
@@ -174,12 +242,31 @@ class DiracPricingOracle(PricingOracle):
     ) -> List[Set[int]]:
         """Extract profitable IS from multiple Dirac solution vectors.
 
-        Tries all (solution, threshold) combinations, applies greedy pruning
+        Tries all (solution, threshold) combinations, applies pruning strategies
         and local search, deduplicates, and returns all profitable sets.
+
+        With multi_prune=True, tries multiple pruning orders per support set.
+        With randomized_rounding=True, also uses probabilistic extraction.
         """
         seen: set = set()
         profitable: List[Set[int]] = []
 
+        def add_if_profitable(pruned: Set[int]) -> None:
+            """Add to results if unique and profitable."""
+            if not pruned:
+                return
+            # Local search refinement
+            refined = _local_search(
+                graph, pruned, dual_vars, max_passes=self.local_search_passes
+            )
+            sig = frozenset(refined)
+            if sig not in seen:
+                seen.add(sig)
+                total = sum(dual_vars[v] for v in refined)
+                if total > 1 + 1e-5:
+                    profitable.append(set(refined))
+
+        # Standard threshold-based extraction
         for x in solutions:
             for threshold in self.support_thresholds:
                 support = {
@@ -188,24 +275,35 @@ class DiracPricingOracle(PricingOracle):
                 if not support:
                     continue
 
-                # Greedy prune to ensure independence (highest dual weight first)
-                pruned: Set[int] = set()
-                for v in sorted(support, key=lambda v: dual_vars[v], reverse=True):
-                    if not any(graph.has_edge(v, u) for u in pruned):
-                        pruned.add(v)
+                if self.multi_prune:
+                    # Try multiple pruning strategies
+                    add_if_profitable(_greedy_prune_dual_desc(support, graph, dual_vars))
+                    add_if_profitable(_greedy_prune_dual_asc(support, graph, dual_vars))
+                    for _ in range(self.num_random_prune_trials):
+                        add_if_profitable(_greedy_prune_random(support, graph, self._rng))
+                else:
+                    # Baseline: only dual-descending prune
+                    add_if_profitable(_greedy_prune_dual_desc(support, graph, dual_vars))
 
-                # Local search refinement
-                pruned = _local_search(
-                    graph, pruned, dual_vars, max_passes=self.local_search_passes
-                )
+        # Randomized rounding extraction
+        if self.randomized_rounding:
+            for x in solutions:
+                x_sum = x.sum()
+                if x_sum < 1e-10:
+                    continue
+                x_norm = x / x_sum  # normalize to probabilities
 
-                # Deduplicate + profitability check
-                sig = frozenset(pruned)
-                if sig not in seen:
-                    seen.add(sig)
-                    total = sum(dual_vars[v] for v in pruned)
-                    if total > 1 + 1e-5:
-                        profitable.append(set(pruned))
+                for _ in range(self.num_random_rounds):
+                    # Sample nodes proportionally to solution values (scaled up)
+                    support = set()
+                    for i, p in enumerate(x_norm):
+                        if self._rng.random() < p * 3:  # scale factor
+                            support.add(node_list[i])
+
+                    if support:
+                        add_if_profitable(
+                            _greedy_prune_dual_desc(support, graph, dual_vars)
+                        )
 
         return profitable
 
