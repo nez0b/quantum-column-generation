@@ -1,0 +1,170 @@
+{
+  "method": "dirac",
+  "graph_name": "ER(100,0.3)",
+  "n_nodes": 100,
+  "n_edges": 1477,
+  "chi": 19,
+  "color_classes": [
+    [
+      14
+    ],
+    [
+      19
+    ],
+    [
+      22
+    ],
+    [
+      43
+    ],
+    [
+      46
+    ],
+    [
+      48
+    ],
+    [
+      58
+    ],
+    [
+      75
+    ],
+    [
+      79
+    ],
+    [
+      99
+    ],
+    [
+      3,
+      6,
+      9,
+      10,
+      16,
+      18,
+      24,
+      29,
+      44,
+      70,
+      89,
+      98
+    ],
+    [
+      7,
+      32,
+      47,
+      53,
+      72,
+      74,
+      76,
+      83,
+      85,
+      95
+    ],
+    [
+      27,
+      30,
+      34,
+      35,
+      42,
+      50,
+      63,
+      77,
+      97
+    ],
+    [
+      2,
+      5,
+      15,
+      17,
+      45,
+      59,
+      61,
+      90
+    ],
+    [
+      4,
+      38,
+      39,
+      52,
+      65,
+      71,
+      78,
+      82,
+      86,
+      93
+    ],
+    [
+      1,
+      11,
+      20,
+      21,
+      23,
+      25,
+      28,
+      54,
+      55,
+      60,
+      73
+    ],
+    [
+      8,
+      33,
+      36,
+      41,
+      51,
+      66,
+      67,
+      80,
+      87
+    ],
+    [
+      12,
+      13,
+      26,
+      37,
+      57,
+      68,
+      69,
+      81,
+      91,
+      94
+    ],
+    [
+      0,
+      31,
+      40,
+      49,
+      56,
+      62,
+      64,
+      84,
+      88,
+      92,
+      96
+    ]
+  ],
+  "valid": true,
+  "iterations": 34,
+  "columns_found": 2454,
+  "wall_seconds": 10478.98,
+  "timing": {
+    "num_api_calls": 35,
+    "total_api_seconds": 2508.48,
+    "total_extract_seconds": 18.8937,
+    "avg_api_seconds": 71.67,
+    "avg_columns_per_call": 67.26,
+    "total_columns_found": 2354
+  },
+  "oracle_config": {
+    "method": "gibbons",
+    "num_samples": 100,
+    "multi_prune": true,
+    "randomized_rounding": true,
+    "num_random_rounds": 10,
+    "random_seed": 42,
+    "support_thresholds": null,
+    "local_search_passes": null
+  },
+  "timestamp": "2026-02-05T22:17:53.169277+00:00"
+}

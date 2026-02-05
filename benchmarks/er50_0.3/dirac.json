@@ -1,0 +1,88 @@
+{
+  "method": "dirac",
+  "graph_name": "ER(50,0.3)",
+  "n_nodes": 50,
+  "n_edges": 368,
+  "chi": 8,
+  "color_classes": [
+    [
+      39
+    ],
+    [
+      41
+    ],
+    [
+      0,
+      5,
+      18,
+      21,
+      22,
+      25,
+      26,
+      32,
+      35,
+      36,
+      37,
+      38
+    ],
+    [
+      2,
+      8,
+      9,
+      16,
+      23,
+      33,
+      43,
+      49
+    ],
+    [
+      6,
+      20,
+      28,
+      34,
+      45,
+      47
+    ],
+    [
+      1,
+      3,
+      10,
+      12,
+      17,
+      44,
+      46
+    ],
+    [
+      4,
+      19,
+      27,
+      29,
+      40,
+      42
+    ],
+    [
+      7,
+      11,
+      13,
+      14,
+      15,
+      24,
+      30,
+      31,
+      48
+    ]
+  ],
+  "valid": true,
+  "wall_seconds": 1263.36,
+  "timestamp": "2026-02-05T16:47:08.888166+00:00",
+  "iterations": 23,
+  "columns_found": 0,
+  "oracle_config": {
+    "method": "gibbons",
+    "num_samples": 100,
+    "multi_prune": true,
+    "randomized_rounding": true,
+    "num_random_rounds": 10,
+    "random_seed": 42
+  }
+}

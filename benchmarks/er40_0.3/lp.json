@@ -1,0 +1,77 @@
+{
+  "method": "lp",
+  "graph_name": "ER(40,0.3)",
+  "n_nodes": 40,
+  "n_edges": 244,
+  "chi": 8,
+  "color_classes": [
+    [
+      9
+    ],
+    [
+      18
+    ],
+    [
+      32
+    ],
+    [
+      1,
+      2,
+      3,
+      17,
+      22,
+      25,
+      36
+    ],
+    [
+      13,
+      14,
+      24,
+      30,
+      31,
+      34,
+      35
+    ],
+    [
+      5,
+      7,
+      10,
+      11,
+      15,
+      16,
+      20,
+      38
+    ],
+    [
+      0,
+      12,
+      19,
+      21,
+      23,
+      29,
+      37
+    ],
+    [
+      4,
+      6,
+      8,
+      26,
+      27,
+      28,
+      33,
+      39
+    ]
+  ],
+  "valid": true,
+  "wall_seconds": 0.77,
+  "timestamp": "2026-02-05T16:47:08.887023+00:00",
+  "iterations": 25,
+  "columns_found": 0,
+  "oracle_config": {
+    "multi_prune": true,
+    "randomized_rounding": true,
+    "num_random_rounds": 10,
+    "random_seed": 42,
+    "local_search_passes": 5
+  }
+}
