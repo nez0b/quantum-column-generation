@@ -1,0 +1,41 @@
+{
+  "graph_name": "ER(50,0.95)",
+  "n_nodes": 50,
+  "n_edges": 1161,
+  "methods": {
+    "greedy": {
+      "chi": 30,
+      "valid": true,
+      "wall_seconds": 0.0001
+    },
+    "lp": {
+      "chi": 28,
+      "valid": true,
+      "wall_seconds": 0.04,
+      "iterations": 5
+    },
+    "dirac": {
+      "chi": 28,
+      "valid": true,
+      "wall_seconds": 271.9,
+      "iterations": 5
+    },
+    "exact_ilp_highs": {
+      "chi": 28,
+      "valid": true,
+      "wall_seconds": 265.84,
+      "status": "optimal",
+      "gap": 0.0
+    },
+    "exact_ilp_hexaly": {
+      "chi": 28,
+      "valid": true,
+      "wall_seconds": 15.24,
+      "status": "optimal",
+      "gap": 0.0
+    }
+  },
+  "best_chi": 28,
+  "winner": "tie (lp/dirac/ilp)",
+  "proven_optimal": true
+}

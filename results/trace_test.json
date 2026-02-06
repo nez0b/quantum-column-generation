@@ -1,0 +1,56 @@
+{
+  "graph": "test",
+  "chi": 3,
+  "trace": [
+    {
+      "iteration": 1,
+      "rmp_obj": 5.0,
+      "pos_dual_nodes": 5,
+      "subgraph_nodes": 5,
+      "subgraph_edges": 6,
+      "cols_added": 3,
+      "total_cols": 8,
+      "oracle_time_s": 57.05,
+      "dual_min": 1.0,
+      "dual_max": 1.0,
+      "dual_mean": 1.0,
+      "col_sizes": [
+        2,
+        2,
+        2
+      ],
+      "converged": false
+    },
+    {
+      "iteration": 2,
+      "rmp_obj": 3.0,
+      "pos_dual_nodes": 3,
+      "subgraph_nodes": 3,
+      "subgraph_edges": 2,
+      "cols_added": 1,
+      "total_cols": 9,
+      "oracle_time_s": 38.37,
+      "dual_min": 1.0,
+      "dual_max": 1.0,
+      "dual_mean": 1.0,
+      "col_sizes": [
+        2
+      ],
+      "converged": false
+    },
+    {
+      "iteration": 3,
+      "rmp_obj": 3.0,
+      "pos_dual_nodes": 3,
+      "subgraph_nodes": 3,
+      "subgraph_edges": 3,
+      "cols_added": 0,
+      "total_cols": 9,
+      "oracle_time_s": 38.82,
+      "dual_min": 1.0,
+      "dual_max": 1.0,
+      "dual_mean": 1.0,
+      "converged": true
+    }
+  ]
+}

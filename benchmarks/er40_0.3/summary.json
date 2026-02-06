@@ -17,10 +17,27 @@
     "dirac": {
       "chi": 7,
       "valid": true,
-      "wall_seconds": 678.87,
-      "iterations": 11
+      "wall_seconds": 1336.0,
+      "iterations": 20,
+      "api_calls": 20,
+      "total_columns": 369,
+      "lp_relaxation_bound": 5.2957
+    },
+    "exact_ilp_highs": {
+      "chi": 6,
+      "valid": true,
+      "wall_seconds": 79.55,
+      "status": "optimal"
+    },
+    "exact_ilp_hexaly": {
+      "chi": 6,
+      "valid": true,
+      "wall_seconds": 174.02,
+      "status": "optimal",
+      "gap": 0.0
     }
   },
-  "best_chi": 7,
-  "winner": "dirac"
+  "best_chi": 6,
+  "winner": "exact_ilp",
+  "has_trace": true
 }

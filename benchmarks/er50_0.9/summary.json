@@ -18,9 +18,24 @@
       "chi": 23,
       "valid": true,
       "wall_seconds": 1054.99,
-      "iterations": 7
+      "iterations": 7,
+      "api_calls": 8,
+      "total_columns": 129
+    },
+    "exact_ilp_highs": {
+      "chi": 23,
+      "valid": true,
+      "wall_seconds": 60.25,
+      "status": "feasible (time limit)",
+      "gap": 0.174
+    },
+    "exact_ilp_hexaly": {
+      "chi": 23,
+      "valid": true,
+      "wall_seconds": 59.73,
+      "status": "feasible"
     }
   },
   "best_chi": 23,
-  "winner": "lp/dirac"
+  "winner": "tie (lp/dirac/ilp)"
 }
