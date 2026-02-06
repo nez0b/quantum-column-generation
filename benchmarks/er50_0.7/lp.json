@@ -1,0 +1,110 @@
+{
+  "method": "lp",
+  "graph_name": "ER(50,0.7)",
+  "n_nodes": 50,
+  "n_edges": 856,
+  "chi": 14,
+  "color_classes": [
+    [
+      29
+    ],
+    [
+      7,
+      9,
+      16,
+      42,
+      46
+    ],
+    [
+      26,
+      27,
+      33,
+      41
+    ],
+    [
+      2,
+      20,
+      28,
+      34,
+      49
+    ],
+    [
+      0,
+      21,
+      37
+    ],
+    [
+      11,
+      15,
+      48
+    ],
+    [
+      4,
+      8,
+      17
+    ],
+    [
+      6,
+      35,
+      36,
+      43
+    ],
+    [
+      3,
+      23,
+      24
+    ],
+    [
+      5,
+      31,
+      32,
+      38
+    ],
+    [
+      10,
+      12,
+      14,
+      45
+    ],
+    [
+      18,
+      19,
+      22
+    ],
+    [
+      30,
+      40,
+      44,
+      47
+    ],
+    [
+      1,
+      13,
+      25,
+      39
+    ]
+  ],
+  "valid": true,
+  "iterations": 19,
+  "columns_found": 199,
+  "wall_seconds": 0.37,
+  "timing": {
+    "num_api_calls": 20,
+    "total_api_seconds": 0.05,
+    "total_extract_seconds": 0.038,
+    "avg_api_seconds": 0.0,
+    "avg_columns_per_call": 7.45,
+    "total_columns_found": 149
+  },
+  "oracle_config": {
+    "method": null,
+    "num_samples": null,
+    "multi_prune": true,
+    "randomized_rounding": true,
+    "num_random_rounds": 10,
+    "random_seed": 42,
+    "support_thresholds": null,
+    "local_search_passes": 5
+  },
+  "timestamp": "2026-02-05T22:52:52.846810+00:00"
+}

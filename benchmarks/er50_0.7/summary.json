@@ -1,0 +1,26 @@
+{
+  "graph_name": "ER(50,0.7)",
+  "n_nodes": 50,
+  "n_edges": 856,
+  "methods": {
+    "greedy": {
+      "chi": 17,
+      "valid": true,
+      "wall_seconds": 0.0001
+    },
+    "lp": {
+      "chi": 14,
+      "valid": true,
+      "wall_seconds": 0.37,
+      "iterations": 19
+    },
+    "dirac": {
+      "chi": 14,
+      "valid": true,
+      "wall_seconds": 2202.97,
+      "iterations": 19
+    }
+  },
+  "best_chi": 14,
+  "winner": "lp/dirac"
+}

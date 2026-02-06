@@ -61,12 +61,17 @@ uv run python -u scripts/benchmark_improved.py --dirac \
 uv run python -u scripts/benchmark.py --classical-only \
   --er-sizes 8 10 12 15 20 --er-probs 0.3 0.5 --max-iterations 500
 
+# Exact ILP benchmark (direct formulation, no column generation)
+uv run python scripts/benchmark_exact_ilp.py --graphs er40_0.3 er50_0.3 --time-limit 120
+# With Hexaly (requires environment setup)
+uv run python scripts/benchmark_exact_ilp.py --graphs er50_0.5 er50_0.7 --time-limit 60 --hexaly
+
 # Validate coloring solutions
 uv run python scripts/validate_results.py --oracle classical --save-colorings results/colorings.json
 uv run python scripts/validate_results.py --summary results/colorings.json
 ```
 
-Results are saved to `results/` as JSON files.
+Results are saved to `results/` and `benchmarks/` as JSON files.
 
 ## Hexaly optimizer setup (optional)
 
@@ -104,6 +109,7 @@ src/quantum_colgen/
     __init__.py
     column_generation.py       # CG loop orchestrator + validate_coloring()
     master_problem.py          # RMP (LP relaxation) + final ILP
+    direct_ilp.py              # Direct ILP formulation (no column generation)
     graphs.py                  # Test graph generators
     timing.py                  # OracleTimer for per-call timing instrumentation
     pricing/
@@ -121,11 +127,13 @@ scripts/
     run_colgen.py              # CLI entry point
     benchmark.py               # Dirac vs classical benchmark (original)
     benchmark_improved.py      # Improved benchmark: CG vs greedy with timing breakdown
+    benchmark_exact_ilp.py     # Direct ILP benchmark (HiGHS vs Hexaly)
     benchmark_ilp_solvers.py   # HiGHS vs Hexaly ILP solver comparison
     benchmark_oracles.py       # MILP vs LP vs Dirac oracle comparison
     validate_results.py        # Coloring validation + solution export
     dirac_extraction_experiments.py  # Extraction strategy experiments
     test_enhanced_extraction_chi.py  # Test enhanced extraction impact on chi
+benchmarks/                    # Benchmark graphs and results (JSON)
 docs/
     refinement.md              # Dirac IS extraction refinement experiments
 results/                       # Benchmark JSON output
@@ -146,9 +154,38 @@ mis-spectral-graph-solver/     # Editable dep (excluded from git)
 - Final ILP supports two solvers: `highs` (default, via scipy) and `hexaly` (optional).
   Use `--ilp-solver hexaly --ilp-time-limit N` for large problems where HiGHS is slow.
 
+## Direct ILP solver (exact coloring)
+
+The `direct_ilp` module provides exact ILP formulations for graph coloring, bypassing
+column generation entirely. Useful for comparison and for proving optimality on small graphs.
+
+**Solvers:**
+- `solve_coloring_ilp_highs()` - scipy MILP (HiGHS backend)
+- `solve_coloring_ilp_hexaly()` - Hexaly optimizer (requires license)
+
+Both solvers support time limits and return the best feasible solution found, even if
+optimality is not proven. The MIP gap indicates how far the solution might be from optimal.
+
+**Benchmark results (60s timeout):**
+
+| Graph | Greedy | HiGHS | Hexaly | Dirac CG | LP CG |
+|-------|--------|-------|--------|----------|-------|
+| ER(40,0.3) | 8 | **6** ✓ | **6** ✓ | 7 | - |
+| ER(50,0.3) | 8 | **6** ✓ | **6** ✓ | 8 | - |
+| ER(50,0.5) | 11 | 9 | 9 | 10 | 11 |
+| ER(50,0.7) | 17 | 14 | **13** | 14 | 14 |
+| ER(50,0.9) | 26 | 23 | 23 | - | - |
+
+✓ = proven optimal
+
+**Key findings:**
+- Exact ILP proves χ=6 is optimal for sparse 40-50 node graphs
+- For dense graphs, ILP with timeout often beats column generation approaches
+- Hexaly found χ=13 for ER(50,0.7) — best known solution
+
 ## Pricing oracles comparison
 
-Three pricing oracles are available:
+Three pricing oracles are available for column generation:
 
 | Oracle | Method | Complexity | Cols/call | Best for |
 |--------|--------|------------|-----------|----------|
