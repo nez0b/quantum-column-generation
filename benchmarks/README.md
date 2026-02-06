@@ -12,8 +12,16 @@ benchmarks/
 │   ├── greedy.json                # Greedy coloring result
 │   ├── lp.json                    # LP CG result
 │   ├── dirac.json                 # Dirac CG result
+│   ├── exact_ilp_highs.json       # Direct ILP result (HiGHS)
+│   ├── exact_ilp_hexaly.json      # Direct ILP result (Hexaly)
 │   └── summary.json               # Combined summary
 ├── er50_0.3/
+│   └── (same structure)
+├── er50_0.5/
+│   └── (same structure)
+├── er50_0.7/
+│   └── (same structure)
+├── er50_0.9/
 │   └── (same structure)
 ├── er75_0.3/
 │   └── (same structure)
@@ -125,19 +133,39 @@ All benchmarks use consistent parameters:
 
 ## Results Summary
 
-| Graph | Nodes | Edges | Greedy | LP | Dirac | Best | Winner |
-|-------|-------|-------|--------|----|----|------|--------|
-| ER(40,0.3) | 40 | 244 | 8 | 8 | **7** | 7 | Dirac |
-| ER(50,0.3) | 50 | 368 | **8** | 10 | **8** | 8 | Greedy/Dirac |
-| ER(75,0.3) | 75 | 804 | **10** | 17 | 14 | 10 | Greedy |
-| ER(100,0.3) | 100 | 1477 | **12** | 22 | 19 | 12 | Greedy |
+### Complete Benchmark Results (300s timeout for ILP)
+
+| Graph | Nodes | Edges | Greedy | LP CG | Dirac CG | HiGHS | Hexaly | Best χ | Winner |
+|-------|-------|-------|--------|-------|----------|-------|--------|--------|--------|
+| ER(40,0.3) | 40 | 244 | 8 | 8 | 7 | **6** ✓ | **6** ✓ | 6 | ILP |
+| ER(50,0.3) | 50 | 368 | 8 | 10 | 8 | **6** ✓ | **6** ✓ | 6 | ILP |
+| ER(50,0.5) | 50 | 596 | 11 | 11 | 10 | **9** | **9** | 9 | ILP |
+| ER(50,0.7) | 50 | 856 | 17 | 14 | 14 | 14 | **13** | 13 | Hexaly |
+| ER(50,0.9) | 50 | 1104 | 26 | - | 23 | 23 | 23 | 23 | Tie |
+| ER(75,0.3) | 75 | 804 | 10 | 17 | 14 | **8** | **8** | 8 | ILP |
+| ER(100,0.3) | 100 | 1477 | 12 | 22 | 19 | **11** | **11** | 11 | ILP |
+
+✓ = proven optimal (0% MIP gap)
 
 ### Key Findings
 
-1. **Small graphs (40-50 nodes)**: Dirac matches or beats greedy coloring
-2. **Large graphs (75-100 nodes)**: Greedy performs best, but Dirac still outperforms LP
-3. **LP degradation**: LP relaxation quality degrades significantly on larger graphs
-4. **Dirac vs LP**: Dirac consistently produces better colorings than LP relaxation
+1. **Exact ILP dominates**: With 300s timeout, HiGHS/Hexaly find better solutions than all other methods
+2. **Sparse graphs (p=0.3)**: ILP proves optimality for 40-50 nodes, finds best solutions for 75-100 nodes
+3. **Dense graphs**: ILP still competitive but harder to prove optimality (higher MIP gaps)
+4. **Hexaly vs HiGHS**: Similar performance; Hexaly found χ=13 for ER(50,0.7), best known
+5. **Column generation value**: CG methods (Dirac, LP) are faster but find suboptimal solutions
+6. **Dirac vs Greedy**: Dirac beats greedy on small dense graphs but loses on larger sparse graphs
+
+### MIP Gaps (300s timeout)
+
+| Graph | HiGHS χ | Gap | Hexaly χ | Gap | Lower Bound |
+|-------|---------|-----|----------|-----|-------------|
+| ER(40,0.3) | 6 | 0% | 6 | 0% | 6 |
+| ER(50,0.3) | 6 | 0% | 6 | 0% | 6 |
+| ER(50,0.5) | 9 | 22% | 9 | - | 7 |
+| ER(50,0.7) | 14 | 29% | 13 | - | 10 |
+| ER(75,0.3) | 8 | 38% | 8 | 38% | 5 |
+| ER(100,0.3) | 11 | 45% | 11 | 45% | 6 |
 
 ## Using Results in Manim Slides
 
