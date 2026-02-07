@@ -113,6 +113,60 @@ def _local_search(
     return improved
 
 
+def _local_search_2swap(
+    graph: nx.Graph,
+    independent_set: Set[int],
+    dual_vars: np.ndarray,
+    max_passes: int = 3,
+) -> Set[int]:
+    """Improve an independent set via 2-swap local search.
+
+    For each pair of IS nodes (u, v), try removing both and greedily adding
+    from ALL positive-dual non-IS nodes (not just u/v neighbors). Accept if
+    net dual weight increases. Restarts the pass on improvement to avoid
+    stale iteration issues.
+
+    More expensive than 1-swap (O(|IS|^2 * n) per pass) but can escape
+    local optima that 1-swap misses, especially on denser graphs.
+    """
+    improved = set(independent_set)
+    all_candidates = sorted(
+        [v for v in graph.nodes() if dual_vars[v] > 1e-8],
+        key=lambda v: dual_vars[v],
+        reverse=True,
+    )
+
+    for _ in range(max_passes):
+        found_improvement = False
+        is_list = sorted(improved, key=lambda v: dual_vars[v])
+
+        for i in range(len(is_list)):
+            for j in range(i + 1, len(is_list)):
+                u, v = is_list[i], is_list[j]
+                removed_weight = dual_vars[u] + dual_vars[v]
+                remaining = improved - {u, v}
+
+                # Greedily add from ALL candidates not in remaining
+                added = set()
+                for w in all_candidates:
+                    if w in remaining:
+                        continue
+                    if not any(graph.has_edge(w, a) for a in remaining | added):
+                        added.add(w)
+
+                added_weight = sum(dual_vars[w] for w in added)
+                if added_weight > removed_weight + 1e-8:
+                    improved = remaining | added
+                    found_improvement = True
+                    break  # restart pass with new IS
+            if found_improvement:
+                break  # restart pass with new IS
+
+        if not found_improvement:
+            break
+    return improved
+
+
 # ---------------------------------------------------------------------------
 # Pruning strategies for multi-prune extraction
 # ---------------------------------------------------------------------------
@@ -156,6 +210,70 @@ def _greedy_prune_random(
         if not any(graph.has_edge(v, u) for u in pruned):
             pruned.add(v)
     return pruned
+
+
+# ---------------------------------------------------------------------------
+# Solution vector clustering
+# ---------------------------------------------------------------------------
+
+def _cluster_solutions(
+    solutions: List[np.ndarray],
+    k: int = 5,
+    max_iter: int = 50,
+    seed: int = 42,
+) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    """Cluster Dirac solution vectors via k-means.
+
+    Returns:
+        (centroids, extremes): Lists of k representative vectors each.
+        centroids[i] = mean of cluster i (denoised consensus).
+        extremes[i] = member farthest from centroid i (maximum diversity).
+    """
+    if len(solutions) <= k:
+        return list(solutions), list(solutions)
+
+    X = np.array(solutions)  # shape (num_samples, dim)
+    n_samples, dim = X.shape
+
+    # Simple k-means (avoid sklearn dependency)
+    rng = np.random.RandomState(seed)
+    indices = rng.choice(n_samples, size=k, replace=False)
+    centers = X[indices].copy()
+
+    for _ in range(max_iter):
+        # Assign to nearest center
+        dists = np.linalg.norm(X[:, None, :] - centers[None, :, :], axis=2)
+        labels = dists.argmin(axis=1)
+
+        # Update centers
+        new_centers = np.zeros_like(centers)
+        for c in range(k):
+            members = X[labels == c]
+            if len(members) > 0:
+                new_centers[c] = members.mean(axis=0)
+            else:
+                new_centers[c] = centers[c]
+
+        if np.allclose(centers, new_centers, atol=1e-8):
+            break
+        centers = new_centers
+
+    # Collect centroids and extremes
+    centroids = []
+    extremes = []
+    for c in range(k):
+        mask = labels == c
+        members = X[mask]
+        if len(members) == 0:
+            continue
+        centroid = members.mean(axis=0)
+        centroids.append(centroid)
+
+        # Extreme = member farthest from centroid
+        dists_to_center = np.linalg.norm(members - centroid, axis=1)
+        extremes.append(members[dists_to_center.argmax()])
+
+    return centroids, extremes
 
 
 class DiracPricingOracle(PricingOracle):

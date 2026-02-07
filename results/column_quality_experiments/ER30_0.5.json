@@ -1,0 +1,551 @@
+[
+  {
+    "experiment_name": "E0_baseline",
+    "graph_name": "ER(30,0.5)",
+    "n_nodes": 30,
+    "n_edges": 217,
+    "params": {
+      "type": "baseline"
+    },
+    "chi": 7,
+    "valid": true,
+    "total_iterations": 10,
+    "total_columns": 134,
+    "total_api_calls": 11,
+    "wall_seconds": 1245.76,
+    "iteration_trace": [
+      {
+        "iteration": 1,
+        "rmp_obj": 30.0,
+        "new_cols": 49,
+        "total_cols": 79,
+        "total_dual_weight": 236.0,
+        "diversity": 0.8403,
+        "api_ms": 103881.7
+      },
+      {
+        "iteration": 2,
+        "rmp_obj": 10.0,
+        "new_cols": 17,
+        "total_cols": 96,
+        "total_dual_weight": 62.0,
+        "diversity": 0.8384,
+        "api_ms": 101135.3
+      },
+      {
+        "iteration": 3,
+        "rmp_obj": 8.0,
+        "new_cols": 4,
+        "total_cols": 100,
+        "total_dual_weight": 15.0,
+        "diversity": 0.8262,
+        "api_ms": 111855.2
+      },
+      {
+        "iteration": 4,
+        "rmp_obj": 7.2,
+        "new_cols": 4,
+        "total_cols": 104,
+        "total_dual_weight": 9.0,
+        "diversity": 0.8524,
+        "api_ms": 111951.9
+      },
+      {
+        "iteration": 5,
+        "rmp_obj": 6.6512,
+        "new_cols": 3,
+        "total_cols": 107,
+        "total_dual_weight": 4.7674,
+        "diversity": 0.8889,
+        "api_ms": 122253.6
+      },
+      {
+        "iteration": 6,
+        "rmp_obj": 6.5922,
+        "new_cols": 3,
+        "total_cols": 110,
+        "total_dual_weight": 3.8058,
+        "diversity": 0.8571,
+        "api_ms": 116934.2
+      },
+      {
+        "iteration": 7,
+        "rmp_obj": 6.4968,
+        "new_cols": 7,
+        "total_cols": 117,
+        "total_dual_weight": 9.0637,
+        "diversity": 0.8389,
+        "api_ms": 114270.6
+      },
+      {
+        "iteration": 8,
+        "rmp_obj": 6.4138,
+        "new_cols": 10,
+        "total_cols": 127,
+        "total_dual_weight": 11.3103,
+        "diversity": 0.8927,
+        "api_ms": 116929.4
+      },
+      {
+        "iteration": 9,
+        "rmp_obj": 6.3333,
+        "new_cols": 5,
+        "total_cols": 132,
+        "total_dual_weight": 5.7619,
+        "diversity": 0.8293,
+        "api_ms": 125155.8
+      },
+      {
+        "iteration": 10,
+        "rmp_obj": 6.2727,
+        "new_cols": 2,
+        "total_cols": 134,
+        "total_dual_weight": 2.2727,
+        "diversity": 1.0,
+        "api_ms": 111990.3
+      }
+    ],
+    "chi_delta": null,
+    "column_ratio": null
+  },
+  {
+    "experiment_name": "E2_subgraph_c2_o0.1",
+    "graph_name": "ER(30,0.5)",
+    "n_nodes": 30,
+    "n_edges": 217,
+    "params": {
+      "num_clusters": 2,
+      "overlap_fraction": 0.1
+    },
+    "chi": 7,
+    "valid": true,
+    "total_iterations": 39,
+    "total_columns": 217,
+    "total_api_calls": 40,
+    "wall_seconds": 7342.09,
+    "iteration_trace": [
+      {
+        "iteration": 1,
+        "rmp_obj": 30.0,
+        "new_cols": 13,
+        "total_cols": 43,
+        "total_dual_weight": 56.0,
+        "diversity": 0.7168,
+        "api_ms": 221750.8
+      },
+      {
+        "iteration": 2,
+        "rmp_obj": 26.0,
+        "new_cols": 24,
+        "total_cols": 67,
+        "total_dual_weight": 78.0,
+        "diversity": 0.8819,
+        "api_ms": 223327.8
+      },
+      {
+        "iteration": 3,
+        "rmp_obj": 16.0,
+        "new_cols": 13,
+        "total_cols": 80,
+        "total_dual_weight": 39.0,
+        "diversity": 0.8577,
+        "api_ms": 229141.5
+      },
+      {
+        "iteration": 4,
+        "rmp_obj": 11.5,
+        "new_cols": 4,
+        "total_cols": 84,
+        "total_dual_weight": 11.0,
+        "diversity": 0.4167,
+        "api_ms": 229097.0
+      },
+      {
+        "iteration": 5,
+        "rmp_obj": 11.5,
+        "new_cols": 4,
+        "total_cols": 88,
+        "total_dual_weight": 11.5,
+        "diversity": 0.85,
+        "api_ms": 223730.7
+      },
+      {
+        "iteration": 35,
+        "rmp_obj": 6.5,
+        "new_cols": 3,
+        "total_cols": 210,
+        "total_dual_weight": 3.375,
+        "diversity": 0.4889,
+        "api_ms": 152566.7
+      },
+      {
+        "iteration": 36,
+        "rmp_obj": 6.5,
+        "new_cols": 1,
+        "total_cols": 211,
+        "total_dual_weight": 1.125,
+        "diversity": 0.0,
+        "api_ms": 147306.4
+      },
+      {
+        "iteration": 37,
+        "rmp_obj": 6.5,
+        "new_cols": 1,
+        "total_cols": 212,
+        "total_dual_weight": 1.0556,
+        "diversity": 0.0,
+        "api_ms": 145694.4
+      },
+      {
+        "iteration": 38,
+        "rmp_obj": 6.5,
+        "new_cols": 2,
+        "total_cols": 214,
+        "total_dual_weight": 2.3125,
+        "diversity": 0.6667,
+        "api_ms": 153169.6
+      },
+      {
+        "iteration": 39,
+        "rmp_obj": 6.5,
+        "new_cols": 3,
+        "total_cols": 217,
+        "total_dual_weight": 3.375,
+        "diversity": 0.7048,
+        "api_ms": 149949.8
+      }
+    ],
+    "chi_delta": 0,
+    "column_ratio": 1.62
+  },
+  {
+    "experiment_name": "E2_subgraph_c2_o0.2",
+    "graph_name": "ER(30,0.5)",
+    "n_nodes": 30,
+    "n_edges": 217,
+    "params": {
+      "num_clusters": 2,
+      "overlap_fraction": 0.2
+    },
+    "chi": 7,
+    "valid": true,
+    "total_iterations": 17,
+    "total_columns": 177,
+    "total_api_calls": 18,
+    "wall_seconds": 1662.08,
+    "iteration_trace": [
+      {
+        "iteration": 1,
+        "rmp_obj": 30.0,
+        "new_cols": 15,
+        "total_cols": 45,
+        "total_dual_weight": 69.0,
+        "diversity": 0.6552,
+        "api_ms": 147903.3
+      },
+      {
+        "iteration": 2,
+        "rmp_obj": 26.0,
+        "new_cols": 31,
+        "total_cols": 76,
+        "total_dual_weight": 131.0,
+        "diversity": 0.8518,
+        "api_ms": 153608.7
+      },
+      {
+        "iteration": 3,
+        "rmp_obj": 15.0,
+        "new_cols": 11,
+        "total_cols": 87,
+        "total_dual_weight": 41.0,
+        "diversity": 0.8362,
+        "api_ms": 150286.9
+      },
+      {
+        "iteration": 4,
+        "rmp_obj": 9.6667,
+        "new_cols": 8,
+        "total_cols": 95,
+        "total_dual_weight": 20.3333,
+        "diversity": 0.8369,
+        "api_ms": 113343.3
+      },
+      {
+        "iteration": 5,
+        "rmp_obj": 8.6667,
+        "new_cols": 7,
+        "total_cols": 102,
+        "total_dual_weight": 17.0,
+        "diversity": 0.8619,
+        "api_ms": 87737.0
+      },
+      {
+        "iteration": 13,
+        "rmp_obj": 6.75,
+        "new_cols": 8,
+        "total_cols": 157,
+        "total_dual_weight": 9.125,
+        "diversity": 0.8192,
+        "api_ms": 87197.1
+      },
+      {
+        "iteration": 14,
+        "rmp_obj": 6.7263,
+        "new_cols": 8,
+        "total_cols": 165,
+        "total_dual_weight": 8.4105,
+        "diversity": 0.9235,
+        "api_ms": 84962.0
+      },
+      {
+        "iteration": 15,
+        "rmp_obj": 6.6842,
+        "new_cols": 3,
+        "total_cols": 168,
+        "total_dual_weight": 3.2105,
+        "diversity": 0.7037,
+        "api_ms": 83234.2
+      },
+      {
+        "iteration": 16,
+        "rmp_obj": 6.625,
+        "new_cols": 1,
+        "total_cols": 169,
+        "total_dual_weight": 1.125,
+        "diversity": 0.0,
+        "api_ms": 82384.4
+      },
+      {
+        "iteration": 17,
+        "rmp_obj": 6.625,
+        "new_cols": 8,
+        "total_cols": 177,
+        "total_dual_weight": 9.125,
+        "diversity": 0.79,
+        "api_ms": 84980.8
+      }
+    ],
+    "chi_delta": 0,
+    "column_ratio": 1.32
+  },
+  {
+    "experiment_name": "E2_subgraph_c3_o0.1",
+    "graph_name": "ER(30,0.5)",
+    "n_nodes": 30,
+    "n_edges": 217,
+    "params": {
+      "num_clusters": 3,
+      "overlap_fraction": 0.1
+    },
+    "chi": 8,
+    "valid": true,
+    "total_iterations": 17,
+    "total_columns": 133,
+    "total_api_calls": 18,
+    "wall_seconds": 2305.48,
+    "iteration_trace": [
+      {
+        "iteration": 1,
+        "rmp_obj": 30.0,
+        "new_cols": 20,
+        "total_cols": 50,
+        "total_dual_weight": 66.0,
+        "diversity": 0.8208,
+        "api_ms": 125638.4
+      },
+      {
+        "iteration": 2,
+        "rmp_obj": 23.0,
+        "new_cols": 17,
+        "total_cols": 67,
+        "total_dual_weight": 52.0,
+        "diversity": 0.8848,
+        "api_ms": 130460.5
+      },
+      {
+        "iteration": 3,
+        "rmp_obj": 16.0,
+        "new_cols": 4,
+        "total_cols": 71,
+        "total_dual_weight": 12.0,
+        "diversity": 0.8,
+        "api_ms": 138364.8
+      },
+      {
+        "iteration": 4,
+        "rmp_obj": 13.0,
+        "new_cols": 3,
+        "total_cols": 74,
+        "total_dual_weight": 8.0,
+        "diversity": 1.0,
+        "api_ms": 89673.9
+      },
+      {
+        "iteration": 5,
+        "rmp_obj": 11.0,
+        "new_cols": 4,
+        "total_cols": 78,
+        "total_dual_weight": 10.0,
+        "diversity": 0.9444,
+        "api_ms": 136948.8
+      },
+      {
+        "iteration": 13,
+        "rmp_obj": 7.913,
+        "new_cols": 5,
+        "total_cols": 120,
+        "total_dual_weight": 5.5652,
+        "diversity": 0.9333,
+        "api_ms": 117648.1
+      },
+      {
+        "iteration": 14,
+        "rmp_obj": 7.871,
+        "new_cols": 4,
+        "total_cols": 124,
+        "total_dual_weight": 4.7581,
+        "diversity": 0.9389,
+        "api_ms": 125874.5
+      },
+      {
+        "iteration": 15,
+        "rmp_obj": 7.6739,
+        "new_cols": 3,
+        "total_cols": 127,
+        "total_dual_weight": 3.6957,
+        "diversity": 0.8667,
+        "api_ms": 126471.8
+      },
+      {
+        "iteration": 16,
+        "rmp_obj": 7.5946,
+        "new_cols": 3,
+        "total_cols": 130,
+        "total_dual_weight": 3.5405,
+        "diversity": 1.0,
+        "api_ms": 120556.0
+      },
+      {
+        "iteration": 17,
+        "rmp_obj": 7.5333,
+        "new_cols": 3,
+        "total_cols": 133,
+        "total_dual_weight": 3.2,
+        "diversity": 0.8333,
+        "api_ms": 220927.7
+      }
+    ],
+    "chi_delta": 1,
+    "column_ratio": 0.99
+  },
+  {
+    "experiment_name": "E2_subgraph_c3_o0.2",
+    "graph_name": "ER(30,0.5)",
+    "n_nodes": 30,
+    "n_edges": 217,
+    "params": {
+      "num_clusters": 3,
+      "overlap_fraction": 0.2
+    },
+    "chi": 8,
+    "valid": true,
+    "total_iterations": 16,
+    "total_columns": 173,
+    "total_api_calls": 17,
+    "wall_seconds": 1967.16,
+    "iteration_trace": [
+      {
+        "iteration": 1,
+        "rmp_obj": 30.0,
+        "new_cols": 15,
+        "total_cols": 45,
+        "total_dual_weight": 63.0,
+        "diversity": 0.6527,
+        "api_ms": 124518.1
+      },
+      {
+        "iteration": 2,
+        "rmp_obj": 26.0,
+        "new_cols": 15,
+        "total_cols": 60,
+        "total_dual_weight": 69.0,
+        "diversity": 0.7234,
+        "api_ms": 116270.9
+      },
+      {
+        "iteration": 3,
+        "rmp_obj": 22.0,
+        "new_cols": 27,
+        "total_cols": 87,
+        "total_dual_weight": 90.0,
+        "diversity": 0.8144,
+        "api_ms": 128381.2
+      },
+      {
+        "iteration": 4,
+        "rmp_obj": 16.0,
+        "new_cols": 17,
+        "total_cols": 104,
+        "total_dual_weight": 56.0,
+        "diversity": 0.8196,
+        "api_ms": 122626.1
+      },
+      {
+        "iteration": 5,
+        "rmp_obj": 12.0,
+        "new_cols": 8,
+        "total_cols": 112,
+        "total_dual_weight": 24.0,
+        "diversity": 0.7804,
+        "api_ms": 89660.4
+      },
+      {
+        "iteration": 12,
+        "rmp_obj": 6.6923,
+        "new_cols": 7,
+        "total_cols": 165,
+        "total_dual_weight": 7.5846,
+        "diversity": 0.8424,
+        "api_ms": 127961.6
+      },
+      {
+        "iteration": 13,
+        "rmp_obj": 6.6667,
+        "new_cols": 2,
+        "total_cols": 167,
+        "total_dual_weight": 2.3333,
+        "diversity": 0.6,
+        "api_ms": 123586.0
+      },
+      {
+        "iteration": 14,
+        "rmp_obj": 6.6614,
+        "new_cols": 1,
+        "total_cols": 168,
+        "total_dual_weight": 1.1005,
+        "diversity": 0.0,
+        "api_ms": 126489.7
+      },
+      {
+        "iteration": 15,
+        "rmp_obj": 6.6614,
+        "new_cols": 2,
+        "total_cols": 170,
+        "total_dual_weight": 2.1852,
+        "diversity": 0.6667,
+        "api_ms": 125835.1
+      },
+      {
+        "iteration": 16,
+        "rmp_obj": 6.6545,
+        "new_cols": 3,
+        "total_cols": 173,
+        "total_dual_weight": 3.5,
+        "diversity": 0.7048,
+        "api_ms": 122598.8
+      }
+    ],
+    "chi_delta": 1,
+    "column_ratio": 1.29
+  }
+]
