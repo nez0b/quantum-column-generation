@@ -21,13 +21,23 @@ except ImportError:
 
 
 def _construct_gibbons_matrix(
-    complement_graph: nx.Graph, weights: Dict[int, float]
+    complement_graph: nx.Graph,
+    weights: Dict[int, float],
+    regularization_c: float = 0.0,
 ) -> np.ndarray:
     """Build matrix B per Gibbons' Theorem 5 on the complement graph.
 
     B[i,i] = 1/w[i]
     B[i,j] = 0                         if (i,j) adjacent in complement
     B[i,j] = (1/w[i] + 1/w[j]) / 2    otherwise
+
+    When regularization_c > 0, applies Bomze regularization by subtracting cI
+    from the diagonal.  This is analogous to Bomze's max x^T(A+cI)x in the
+    minimization formulation and creates distinct basins for different maximal
+    independent sets, improving column diversity from Dirac.
+
+    Safety: if c >= min(1/w_i), it is clamped to 0.9 * min(1/w_i) to keep the
+    diagonal positive (required for a valid QP).
     """
     nodes = list(complement_graph.nodes())
     n = len(nodes)
@@ -40,6 +50,15 @@ def _construct_gibbons_matrix(
                     B[i, j] = 0.0
                 else:
                     B[i, j] = (1.0 / weights[ni] + 1.0 / weights[nj]) / 2.0
+
+    if regularization_c > 0.0:
+        min_diag = min(B[i, i] for i in range(n))
+        c = regularization_c
+        if c >= min_diag:
+            c = 0.9 * min_diag
+        for i in range(n):
+            B[i, i] -= c
+
     return B
 
 
@@ -311,6 +330,7 @@ class DiracPricingOracle(PricingOracle):
         randomized_rounding: bool = False,
         num_random_rounds: int = 10,
         random_seed: Optional[int] = None,
+        regularization_c: float = 0.0,
     ):
         if not DIRAC_AVAILABLE:
             raise ImportError(
@@ -322,6 +342,7 @@ class DiracPricingOracle(PricingOracle):
         self.sum_constraint = sum_constraint
         self.solution_precision = solution_precision
         self.local_search_passes = local_search_passes
+        self.regularization_c = regularization_c
 
         # Multi-prune: use multiple pruning strategies per (solution, threshold)
         self.multi_prune = multi_prune
@@ -482,7 +503,7 @@ class DiracPricingOracle(PricingOracle):
 
         weights = {v: float(dual_vars[v]) for v in pos_nodes}
         complement = nx.complement(subgraph)
-        B = _construct_gibbons_matrix(complement, weights)
+        B = _construct_gibbons_matrix(complement, weights, self.regularization_c)
 
         # Dirac minimises  x^T B x  on the simplex.
         # The model format is  min  x^T C + x^T J x, so C=0, J=B

@@ -18,6 +18,8 @@ def column_generation(
     verbose: bool = False,
     ilp_solver: str = "highs",
     ilp_time_limit: Optional[int] = None,
+    dual_smoothing_alpha: Optional[float] = None,
+    subproblem_aging_threshold: Optional[float] = None,
 ) -> Tuple[Optional[int], List[FrozenSet[int]], Dict[str, Any]]:
     """Run column generation for minimum vertex coloring.
 
@@ -30,6 +32,12 @@ def column_generation(
         verbose: Print iteration details.
         ilp_solver: Solver for final ILP ("highs" or "hexaly").
         ilp_time_limit: Optional time limit for final ILP in seconds.
+        dual_smoothing_alpha: If set, blend duals with a running center via
+            smoothed = alpha*center + (1-alpha)*current (Wentges 1997).
+            Stabilizes the RMP and reduces oscillation. 0 = no smoothing.
+        subproblem_aging_threshold: If set, skip oracle call when the
+            relative change in dual vars is below this threshold.
+            Saves API calls when duals are nearly converged.
 
     Returns:
         (chromatic_number, coloring_as_frozensets, stats_dict)
@@ -43,7 +51,18 @@ def column_generation(
     columns: List[FrozenSet[int]] = [frozenset([i]) for i in range(num_vertices)]
     known_sigs = {tuple(sorted(c)) for c in columns}
 
-    stats: Dict[str, Any] = {"iterations": 0, "columns_generated": 0}
+    stats: Dict[str, Any] = {
+        "iterations": 0,
+        "columns_generated": 0,
+        "oracle_calls_skipped": 0,
+        "rmp_obj_trace": [],
+    }
+
+    # Dual smoothing state
+    dual_center: Optional[np.ndarray] = None
+
+    # Subproblem aging state
+    prev_duals: Optional[np.ndarray] = None
 
     for iteration in range(1, max_iterations + 1):
         if verbose:
@@ -56,11 +75,40 @@ def column_generation(
                 print("  RMP failed")
             break
 
+        stats["rmp_obj_trace"].append(float(obj))
+
         if verbose:
             print(f"  RMP obj={obj:.4f}  duals={dual_vars}")
 
+        # Subproblem aging: skip oracle when duals barely changed
+        if (
+            subproblem_aging_threshold is not None
+            and prev_duals is not None
+        ):
+            norm_prev = np.linalg.norm(prev_duals)
+            rel_change = np.linalg.norm(dual_vars - prev_duals) / (norm_prev + 1e-10)
+            if rel_change < subproblem_aging_threshold:
+                stats["oracle_calls_skipped"] += 1
+                if verbose:
+                    print(f"  Aging: duals changed {rel_change:.4f} < {subproblem_aging_threshold} — skipping oracle")
+                prev_duals = dual_vars.copy()
+                stats["iterations"] = iteration
+                continue
+        prev_duals = dual_vars.copy()
+
+        # Dual smoothing (Wentges-style)
+        oracle_duals = dual_vars
+        if dual_smoothing_alpha is not None and dual_smoothing_alpha > 0:
+            if dual_center is None:
+                dual_center = dual_vars.copy()
+            smoothed = dual_smoothing_alpha * dual_center + (1 - dual_smoothing_alpha) * dual_vars
+            dual_center = smoothed.copy()
+            oracle_duals = smoothed
+            if verbose:
+                print(f"  Smoothed duals: min={oracle_duals.min():.4f} max={oracle_duals.max():.4f}")
+
         # Pricing subproblem
-        new_cols = oracle.solve(graph, dual_vars)
+        new_cols = oracle.solve(graph, oracle_duals)
 
         if not new_cols:
             if verbose:
