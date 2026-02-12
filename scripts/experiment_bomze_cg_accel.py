@@ -159,6 +159,7 @@ def run_s1(
             continue
 
         for c in c_values:
+            print(f"  c={c:.1f}: submitting to Dirac API...", flush=True)
             oracle = DiracPricingOracle(
                 method="gibbons",
                 num_samples=num_samples,

@@ -1,0 +1,96 @@
+{
+  "stage": "S1",
+  "s1_results": [
+    {
+      "graph_name": "ER(30,0.3)",
+      "c_value": 0.0,
+      "unique_is": 120,
+      "profitable_is": 120,
+      "avg_is_size": 6.683333333333334,
+      "jaccard_diversity": 0.767,
+      "wall_seconds": 694.1
+    },
+    {
+      "graph_name": "ER(30,0.3)",
+      "c_value": 0.1,
+      "unique_is": 120,
+      "profitable_is": 120,
+      "avg_is_size": 6.608333333333333,
+      "jaccard_diversity": 0.769,
+      "wall_seconds": 597.25
+    },
+    {
+      "graph_name": "ER(30,0.3)",
+      "c_value": 0.2,
+      "unique_is": 121,
+      "profitable_is": 121,
+      "avg_is_size": 6.644628099173554,
+      "jaccard_diversity": 0.766,
+      "wall_seconds": 262.12
+    },
+    {
+      "graph_name": "ER(30,0.3)",
+      "c_value": 0.3,
+      "unique_is": 119,
+      "profitable_is": 119,
+      "avg_is_size": 6.61344537815126,
+      "jaccard_diversity": 0.769,
+      "wall_seconds": 316.58
+    },
+    {
+      "graph_name": "ER(30,0.3)",
+      "c_value": 0.5,
+      "unique_is": 121,
+      "profitable_is": 121,
+      "avg_is_size": 6.578512396694215,
+      "jaccard_diversity": 0.77,
+      "wall_seconds": 266.96
+    },
+    {
+      "graph_name": "ER(40,0.3)",
+      "c_value": 0.0,
+      "unique_is": 151,
+      "profitable_is": 151,
+      "avg_is_size": 7.887417218543046,
+      "jaccard_diversity": 0.808,
+      "wall_seconds": 122.61
+    },
+    {
+      "graph_name": "ER(40,0.3)",
+      "c_value": 0.1,
+      "unique_is": 166,
+      "profitable_is": 166,
+      "avg_is_size": 7.795180722891566,
+      "jaccard_diversity": 0.81,
+      "wall_seconds": 139.03
+    },
+    {
+      "graph_name": "ER(40,0.3)",
+      "c_value": 0.2,
+      "unique_is": 174,
+      "profitable_is": 174,
+      "avg_is_size": 7.747126436781609,
+      "jaccard_diversity": 0.81,
+      "wall_seconds": 224.93
+    },
+    {
+      "graph_name": "ER(40,0.3)",
+      "c_value": 0.3,
+      "unique_is": 190,
+      "profitable_is": 190,
+      "avg_is_size": 7.71578947368421,
+      "jaccard_diversity": 0.82,
+      "wall_seconds": 188.41
+    },
+    {
+      "graph_name": "ER(40,0.3)",
+      "c_value": 0.5,
+      "unique_is": 178,
+      "profitable_is": 178,
+      "avg_is_size": 7.679775280898877,
+      "jaccard_diversity": 0.811,
+      "wall_seconds": 222.68
+    }
+  ],
+  "cg_results": []
+}
