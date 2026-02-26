@@ -1,0 +1,3 @@
+[submodule "quantum-branch-price"]
+	path = quantum-branch-price
+	url = ./quantum-branch-price

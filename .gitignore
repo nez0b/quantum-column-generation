@@ -1,6 +1,9 @@
 # Editable dependency (has its own git repo)
 mis-spectral-graph-solver/
 
+# Manim presentation artifacts
+manim/
+
 # Python
 __pycache__/
 *.py[cod]
