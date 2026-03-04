@@ -69,6 +69,11 @@ uv run python scripts/benchmark_exact_ilp.py --graphs er50_0.5 er50_0.7 --time-l
 # Validate coloring solutions
 uv run python scripts/validate_results.py --oracle classical --save-colorings results/colorings.json
 uv run python scripts/validate_results.py --summary results/colorings.json
+
+# Four-way comparison: Hexaly / CG / Classical B&P / Quantum B&P
+source ~/.zshrc
+uv run python scripts/run_er75_compare.py            # full run (~4+ hr for QBP)
+uv run python scripts/run_er75_compare.py --skip-bp --skip-qbp  # dry-run (~20 min)
 ```
 
 Results are saved to `results/` and `benchmarks/` as JSON files.
@@ -133,6 +138,7 @@ scripts/
     validate_results.py        # Coloring validation + solution export
     dirac_extraction_experiments.py  # Extraction strategy experiments
     test_enhanced_extraction_chi.py  # Test enhanced extraction impact on chi
+    run_er75_compare.py            # Four-way comparison: Hexaly/CG in-process, BP/QBP via subprocess
 benchmarks/                    # Benchmark graphs and results (JSON)
 docs/
     refinement.md              # Dirac IS extraction refinement experiments

@@ -1,5 +1,6 @@
 """Column generation loop orchestrator for minimum vertex graph coloring."""
 
+import time
 from dataclasses import dataclass
 from typing import Dict, FrozenSet, List, Optional, Set, Tuple, Any
 
@@ -20,6 +21,7 @@ def column_generation(
     ilp_time_limit: Optional[int] = None,
     dual_smoothing_alpha: Optional[float] = None,
     subproblem_aging_threshold: Optional[float] = None,
+    time_limit: Optional[float] = None,
 ) -> Tuple[Optional[int], List[FrozenSet[int]], Dict[str, Any]]:
     """Run column generation for minimum vertex coloring.
 
@@ -38,13 +40,14 @@ def column_generation(
         subproblem_aging_threshold: If set, skip oracle call when the
             relative change in dual vars is below this threshold.
             Saves API calls when duals are nearly converged.
+        time_limit: Optional wall-clock time limit in seconds. When elapsed,
+            the loop exits early and stats["time_limit_reached"] is set True.
 
     Returns:
         (chromatic_number, coloring_as_frozensets, stats_dict)
         chromatic_number is None on failure.
     """
     node_list = sorted(graph.nodes())
-    node_to_idx = {node: i for i, node in enumerate(node_list)}
     num_vertices = len(node_list)
 
     # Initialise with singleton columns
@@ -56,6 +59,7 @@ def column_generation(
         "columns_generated": 0,
         "oracle_calls_skipped": 0,
         "rmp_obj_trace": [],
+        "time_limit_reached": False,
     }
 
     # Dual smoothing state
@@ -64,7 +68,14 @@ def column_generation(
     # Subproblem aging state
     prev_duals: Optional[np.ndarray] = None
 
+    cg_start = time.monotonic()
+
     for iteration in range(1, max_iterations + 1):
+        if time_limit is not None and (time.monotonic() - cg_start) > time_limit:
+            stats["time_limit_reached"] = True
+            if verbose:
+                print(f"  Time limit {time_limit}s reached at iteration {iteration}")
+            break
         if verbose:
             print(f"--- Iteration {iteration} ---")
 
