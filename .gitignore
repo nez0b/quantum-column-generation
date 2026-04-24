@@ -1,8 +1,13 @@
 # Editable dependency (has its own git repo)
 mis-spectral-graph-solver/
 
-# Manim presentation artifacts
-manim/
+# Manim generated outputs (keep source files tracked; ignore renders + TeX caches)
+manim/media/
+manim/*.mp4
+manim/presentation.html
+manim/presentation*.pptx
+manim/presentation_assets/
+manim/slides/
 
 # Python
 __pycache__/
