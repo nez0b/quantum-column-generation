@@ -18,8 +18,8 @@ class ClosingScene(Scene):
             font_size=56, color=FG_PRIMARY,
         ).shift(UP * 0.8)
         line2 = Tex(
-            r"$\to$ fewer CG iterations",
-            font_size=48, color=QCI_ORANGE,
+            r"$\to$ fewer CG iterations at larger $n$",
+            font_size=44, color=QCI_ORANGE,
         ).next_to(line1, DOWN, buff=0.35)
         ref = Tex(
             r"\small Full deck: \texttt{RF-branching/slides/qcg\_vs\_cg\_demo/qcg\_vs\_cg\_demo.pdf}",

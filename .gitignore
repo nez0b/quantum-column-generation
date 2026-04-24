@@ -3,6 +3,8 @@ mis-spectral-graph-solver/
 
 # Manim generated outputs (keep source files tracked; ignore renders + TeX caches)
 manim/media/
+manim/videos/*/media/
+manim/videos/*/*.mp4
 manim/*.mp4
 manim/presentation.html
 manim/presentation*.pptx

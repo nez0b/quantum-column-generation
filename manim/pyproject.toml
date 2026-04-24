@@ -20,5 +20,7 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# No installable package — each video under videos/<name>/ is invoked
+# directly by its render script (uv run manim path/to/scene.py Class).
 [tool.hatch.build.targets.wheel]
-packages = ["src/quantum_colgen_slides"]
+bypass-selection = true

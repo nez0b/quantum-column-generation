@@ -1,0 +1,445 @@
+{
+  "instances": [
+    {
+      "n": 20,
+      "p": 0.3,
+      "methods": {
+        "bp_isf": {
+          "chi": 4,
+          "iters": 7,
+          "cpc": 8.86,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 4,
+          "iters": 11,
+          "cpc": 7.45,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 4,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 4,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 4,
+          "iters": 13,
+          "cpc": 3.15,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 4,
+          "iters": 5,
+          "cpc": 4.2,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 4
+    },
+    {
+      "n": 20,
+      "p": 0.5,
+      "methods": {
+        "bp_isf": {
+          "chi": 6,
+          "iters": 8,
+          "cpc": 4.25,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 6,
+          "iters": 6,
+          "cpc": 6.67,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 6,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 6,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 6,
+          "iters": 11,
+          "cpc": 3.0,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 6,
+          "iters": 10,
+          "cpc": 3.7,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 6
+    },
+    {
+      "n": 20,
+      "p": 0.7,
+      "methods": {
+        "bp_isf": {
+          "chi": 8,
+          "iters": 6,
+          "cpc": 6.5,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 8,
+          "iters": 4,
+          "cpc": 6.75,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 8,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 8,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 8,
+          "iters": 6,
+          "cpc": 4.83,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 8,
+          "iters": 6,
+          "cpc": 4.67,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 8
+    },
+    {
+      "n": 50,
+      "p": 0.3,
+      "methods": {
+        "bp_isf": {
+          "chi": 7,
+          "iters": 43,
+          "cpc": 11.37,
+          "nodes": 2,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 11,
+          "iters": 12,
+          "cpc": 13.92,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 6,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 6,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 7,
+          "iters": 14,
+          "cpc": 20.07,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 9,
+          "iters": 14,
+          "cpc": 25.29,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 6
+    },
+    {
+      "n": 50,
+      "p": 0.5,
+      "methods": {
+        "bp_isf": {
+          "chi": 10,
+          "iters": 59,
+          "cpc": 9.25,
+          "nodes": 3,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 11,
+          "iters": 18,
+          "cpc": 10.5,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 9,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 9,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 10,
+          "iters": 38,
+          "cpc": 13.71,
+          "nodes": 2,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 11,
+          "iters": 20,
+          "cpc": 15.85,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 9
+    },
+    {
+      "n": 50,
+      "p": 0.7,
+      "methods": {
+        "bp_isf": {
+          "chi": 14,
+          "iters": 34,
+          "cpc": 8.18,
+          "nodes": 2,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 14,
+          "iters": 16,
+          "cpc": 9.19,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 14,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 14,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 14,
+          "iters": 28,
+          "cpc": 5.89,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 14,
+          "iters": 18,
+          "cpc": 8.22,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 14
+    },
+    {
+      "n": 100,
+      "p": 0.3,
+      "methods": {
+        "bp_isf": {
+          "chi": 11,
+          "iters": 308,
+          "cpc": 12.02,
+          "nodes": 7,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 10,
+          "iters": 86,
+          "cpc": 10.97,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 10,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 10,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 11,
+          "iters": 191,
+          "cpc": 31.66,
+          "nodes": 6,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 10,
+          "iters": 41,
+          "cpc": 50.49,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 10
+    },
+    {
+      "n": 100,
+      "p": 0.5,
+      "methods": {
+        "bp_isf": {
+          "chi": 17,
+          "iters": 386,
+          "cpc": 9.82,
+          "nodes": 12,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 15,
+          "iters": 64,
+          "cpc": 9.31,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 17,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 17,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 17,
+          "iters": 170,
+          "cpc": 25.85,
+          "nodes": 6,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 15,
+          "iters": 35,
+          "cpc": 26.46,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 15
+    },
+    {
+      "n": 100,
+      "p": 0.7,
+      "methods": {
+        "bp_isf": {
+          "chi": 24,
+          "iters": 300,
+          "cpc": 8.93,
+          "nodes": 9,
+          "best_known_chi": null
+        },
+        "cg": {
+          "chi": 24,
+          "iters": 39,
+          "cpc": 9.41,
+          "nodes": 1,
+          "best_known_chi": null
+        },
+        "hexaly": {
+          "chi": 23,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "milp": {
+          "chi": 28,
+          "iters": null,
+          "cpc": null,
+          "nodes": null,
+          "best_known_chi": null
+        },
+        "qbp_isf": {
+          "chi": 23,
+          "iters": 134,
+          "cpc": 16.54,
+          "nodes": 5,
+          "best_known_chi": null
+        },
+        "qcg": {
+          "chi": 24,
+          "iters": 26,
+          "cpc": 18.42,
+          "nodes": 1,
+          "best_known_chi": null
+        }
+      },
+      "best_chi": 23
+    }
+  ]
+}
