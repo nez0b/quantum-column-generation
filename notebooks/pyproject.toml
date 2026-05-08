@@ -1,0 +1,42 @@
+[project]
+name = "qcg-notebooks"
+version = "0.1.0"
+description = "Tutorial notebooks for the quantum-column-generation project (Motzkin-Straus → CG → industry pipeline demo)."
+requires-python = ">=3.10"
+
+# Runtime deps only. The cloud Dirac path needs `eqc-models` + `qci-client`;
+# the direct path needs `eqc-direct` (optional extra below). The parent
+# `quantum-colgen` package is sourced from the repo root via a uv source.
+dependencies = [
+    "quantum-colgen",
+    "numpy>=1.22,<2",
+    "scipy",
+    "networkx>=2.6,<3",
+    "matplotlib",
+    "pandas",
+    "qci-client",
+    "eqc-models",
+    "jupyter>=1.0",
+    "ipywidgets>=8",
+    "nbformat",
+    "nbconvert",
+]
+
+[project.optional-dependencies]
+# On-prem direct mode. eqc-direct historically pinned Python <3.11 but
+# recent wheels run on 3.12/3.13 — keep it as an explicit opt-in here.
+direct = ["eqc-direct"]
+
+# For executing notebooks from the command line (CI / nbconvert smoke tests).
+test = ["nbconvert", "nbformat", "pytest"]
+
+# ---------------------------------------------------------------------------
+# uv: source the parent project as an editable install. From inside this
+# folder the repo root is one level up.
+# ---------------------------------------------------------------------------
+[tool.uv.sources]
+quantum-colgen = { path = "..", editable = true }
+
+[tool.uv]
+# Match the parent repo's compatibility envelope: numpy<2, networkx<3 for
+# eqc-models. Nothing more to pin here.

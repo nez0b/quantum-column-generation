@@ -61,6 +61,14 @@ arXiv-2301.02637v2/
 # Original tutorial notebook at root (copy lives in notebooks/)
 /tutorial*.ipynb
 
+# Live-run captures from realtime notebooks
+notebooks/runs/*
+!notebooks/runs/.gitkeep
+
+# Portable notebooks venv (per-user; built via `cd notebooks && uv sync`)
+notebooks/.venv/
+notebooks/uv.lock
+
 # Datasets
 datasets/
 
