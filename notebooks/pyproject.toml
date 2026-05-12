@@ -30,6 +30,12 @@ direct = ["eqc-direct"]
 # For executing notebooks from the command line (CI / nbconvert smoke tests).
 test = ["nbconvert", "nbformat", "pytest"]
 
+# Hexaly is a licensed commercial ILP solver — it is NOT pip-installable.
+# Install via the licensed binary (see README "Optional: Hexaly ILP solver"
+# section) and set PYTHONPATH / DYLD_LIBRARY_PATH. Notebooks 03a/03b/04
+# detect it at import time and gracefully skip if it's missing.
+hexaly = []
+
 # ---------------------------------------------------------------------------
 # uv: source the parent project as an editable install. From inside this
 # folder the repo root is one level up.

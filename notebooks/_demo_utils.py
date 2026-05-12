@@ -133,6 +133,59 @@ def psp_dual_array(psp: Dict[str, Any], num_nodes: Optional[int] = None) -> np.n
     return arr
 
 
+def list_bundled_instances() -> List[Tuple[str, int, int]]:
+    """Return ``[(instance_id, n_nodes, n_calls), ...]`` for every bundled instance.
+
+    Walks ``RAW_SAMPLES_ROOT`` for any directory whose ``qcg/raw_samples/``
+    subfolder has a non-empty ``index.jsonl``. Reads the first call's
+    ``node_list`` to report graph size.
+    """
+    out: List[Tuple[str, int, int]] = []
+    if not RAW_SAMPLES_ROOT.exists():
+        return out
+    for inst_dir in sorted(RAW_SAMPLES_ROOT.iterdir()):
+        if not inst_dir.is_dir() or not inst_dir.name.startswith("er_"):
+            continue
+        qcg_raw = inst_dir / "qcg" / "raw_samples"
+        if not qcg_raw.exists():
+            continue
+        idx = load_call_index(qcg_raw)
+        if not idx:
+            continue
+        first = load_call_record(qcg_raw, idx[0]["call_idx"])
+        out.append((inst_dir.name, len(first.node_list), len(idx)))
+    return out
+
+
+def load_bundled_instance(
+    instance_id: str = "er_n20_p70_s0",
+    method: str = "qcg",
+) -> Tuple[nx.Graph, Dict[int, Tuple[float, float]]]:
+    """Return ``(graph, layout)`` reconstructed from a bundled instance.
+
+    The graph is read from the first saved CallRecord's ``node_list`` and
+    ``graph_edges``, so no PSP JSON is needed. Layout is fresh Kamada-Kawai.
+
+    Args:
+        instance_id: subdirectory under ``RAW_SAMPLES_ROOT`` (e.g.
+            ``"er_n20_p70_s0"`` or ``"er_n50_p30_s0"``).
+        method: subdirectory under the instance (``"qcg"`` or ``"cg"``).
+    """
+    raw_dir = RAW_SAMPLES_ROOT / instance_id / method / "raw_samples"
+    index = load_call_index(raw_dir)
+    if not index:
+        raise FileNotFoundError(
+            f"No call records under {raw_dir}. "
+            f"Available bundled instances: {[t[0] for t in list_bundled_instances()]}"
+        )
+    rec = load_call_record(raw_dir, index[0]["call_idx"])
+    g = nx.Graph()
+    g.add_nodes_from(rec.node_list)
+    g.add_edges_from(rec.graph_edges)
+    layout = kamada_kawai_layout(g)
+    return g, layout
+
+
 # ---------------------------------------------------------------------------
 # Visualization
 # ---------------------------------------------------------------------------
@@ -707,11 +760,34 @@ def _import_main_dirac():
     return _do, DiracPricingOracle
 
 
+def _resize_replay_samples(rec, n_target: int) -> List[np.ndarray]:
+    """Pad/truncate saved raw_solutions to match the live subgraph size.
+
+    Non-strict replay reuses cached samples even when the live CG ends up
+    on a slightly different positive-dual subgraph from the recorded one.
+    If the saved samples are longer than ``n_target`` (live subgraph
+    shrank), we truncate; if shorter (live subgraph grew, rare), we pad
+    with zeros. Either way the live extraction's
+    ``range(len(x))``-indexed support sweep stays in bounds.
+    """
+    out = []
+    for s in rec.raw_solutions:
+        s = np.asarray(s, dtype=np.float64)
+        if len(s) > n_target:
+            s = s[:n_target]
+        elif len(s) < n_target:
+            s = np.concatenate([s, np.zeros(n_target - len(s), dtype=np.float64)])
+        out.append(s)
+    return out
+
+
 def _make_fake_cloud_solver(get_next_record):
     """Build a stand-in for Dirac3ContinuousCloudSolver.
 
     ``get_next_record`` is a 0-arg callable that pops the next saved
     CallRecord-equivalent (must expose ``raw_solutions`` ndarray).
+    Returned solutions are auto-resized to the live model dimension so
+    non-strict replay survives small subgraph drift.
     """
 
     class FakeSolver:
@@ -720,7 +796,15 @@ def _make_fake_cloud_solver(get_next_record):
 
         def solve(self, model, **params):  # noqa: D401
             rec = get_next_record()
-            solutions_as_lists = [list(map(float, row)) for row in rec.raw_solutions]
+            if rec is None:  # non-strict, replay exhausted
+                return {"results": {"solutions": []}, "job_info": {"job_id": "replay_exhausted"}}
+            # Infer the live model size from the upper_bound vector
+            # (set by _solve_gibbons as np.ones(n)).
+            n_target = int(getattr(model, "upper_bound", []).shape[0]) \
+                if hasattr(model, "upper_bound") and model.upper_bound is not None \
+                else rec.raw_solutions.shape[1]
+            resized = _resize_replay_samples(rec, n_target)
+            solutions_as_lists = [list(map(float, row)) for row in resized]
             return {
                 "results": {"solutions": solutions_as_lists},
                 "job_info": {"job_id": "replay"},
@@ -758,10 +842,14 @@ class ReplayDiracOracle:  # noqa: D401 — replays cached calls
 
             def _peek_next(inner, expected_gs: str, expected_ds: str):
                 if inner._cursor >= len(inner._index):
-                    raise RuntimeError(
-                        f"ReplayDiracOracle: cursor={inner._cursor} exceeds "
-                        f"recorded calls={len(inner._index)} (no more samples)."
-                    )
+                    if inner._strict:
+                        raise RuntimeError(
+                            f"ReplayDiracOracle: cursor={inner._cursor} exceeds "
+                            f"recorded calls={len(inner._index)} (no more samples)."
+                        )
+                    # Non-strict: signal CG to stop by returning a sentinel
+                    # record whose ``raw_solutions`` is empty.
+                    return None
                 entry = inner._index[inner._cursor]
                 if inner._strict and (
                     entry["graph_sig"] != expected_gs
@@ -791,7 +879,10 @@ class ReplayDiracOracle:  # noqa: D401 — replays cached calls
 
                 def fake_qp(adjacency_matrix, **_kw):
                     rec = get_next()
-                    return [np.array(s, dtype=np.float64) for s in rec.raw_solutions]
+                    if rec is None:  # non-strict, replay exhausted
+                        return []
+                    n_target = int(adjacency_matrix.shape[0])
+                    return _resize_replay_samples(rec, n_target)
 
                 FakeSolver = _make_fake_cloud_solver(get_next)
 
@@ -1012,6 +1103,8 @@ def make_dirac_oracle(
     mode: str = "replay",
     *,
     raw_dir: Optional[Path] = None,
+    instance: Optional[str] = None,
+    replay_method: str = "qcg",
     method: str = "gibbons",
     num_samples: int = 100,
     relax_schedule: int = 2,
@@ -1031,12 +1124,19 @@ def make_dirac_oracle(
     """Return a Dirac pricing oracle for the chosen backend mode.
 
     mode:
-      - "replay": uses ``raw_dir`` (defaults to the bundled
-        RF-branching/instances/<DEFAULT_BUNDLED_INSTANCE>/<DEFAULT_BUNDLED_METHOD>/raw_samples).
+      - "replay": reads ``raw_dir`` (defaults to bundled
+        ``data_bundle/<instance>/<replay_method>/raw_samples``;
+        ``instance`` defaults to ``DEFAULT_BUNDLED_INSTANCE``;
+        ``replay_method`` defaults to ``"qcg"``).
       - "cloud":  queries the QCi cloud API. Prompts for QCI_TOKEN if missing
         when ``interactive=True``.
       - "direct": uses eqc-direct on-prem. Resolves EQC_DIRECT_* env vars or
         prompts when ``interactive=True``.
+
+    ``method`` selects the Dirac extraction algorithm (``"gibbons"`` or
+    ``"filter"``); ``replay_method`` selects the on-disk method subdirectory
+    when constructing the replay path. They are intentionally separate
+    parameters.
     """
     common = dict(
         method=method,
@@ -1052,13 +1152,17 @@ def make_dirac_oracle(
     common.update(extra)
 
     if mode == "replay":
-        rd = Path(raw_dir) if raw_dir else (
-            RAW_SAMPLES_ROOT / DEFAULT_BUNDLED_INSTANCE / DEFAULT_BUNDLED_METHOD / "raw_samples"
-        )
+        if raw_dir:
+            rd = Path(raw_dir)
+        else:
+            inst = instance or DEFAULT_BUNDLED_INSTANCE
+            rd = RAW_SAMPLES_ROOT / inst / replay_method / "raw_samples"
         if not rd.exists():
+            available = [t[0] for t in list_bundled_instances()]
             raise FileNotFoundError(
-                f"Bundled replay data not found at {rd}. Either pass raw_dir=... or check "
-                "that the RF-branching submodule is initialised."
+                f"Bundled replay data not found at {rd}. "
+                f"Available instances: {available}. "
+                "Pass raw_dir=... explicitly, or check that data_bundle/ is populated."
             )
         # Default replay_strict=False because the bundled samples were recorded by
         # the qbp package's CG; rerunning CG with the main package will pick
@@ -1148,6 +1252,7 @@ __all__ = [
     "IS_PALETTE",
     # data
     "load_psp", "psp_to_graph", "psp_to_layout", "psp_dual_array",
+    "load_bundled_instance", "list_bundled_instances",
     # viz
     "draw_graph", "draw_graph_duals", "draw_columns_grid", "draw_coloring",
     "kamada_kawai_layout",

@@ -1,4 +1,4 @@
-% tutorial.tex — End-to-End QCG tutorial (mirrors notebook 06)
+% tutorial.tex — End-to-End QCG tutorial (mirrors notebook 04)
 % Technical customer presentation. Uses the canonical QCi beamer template.
 %
 % Compile: pdflatex tutorial.tex (twice for frame numbers)
@@ -340,23 +340,46 @@
 \section{Antenna demo}
 
 \begin{frame}{Synthetic antenna network (25 antennas in 10\,km box)}
-  \centering
-  \begin{tikzpicture}[scale=0.7]
-    % Sketched scatter of antennas
-    \foreach \x/\y in {1/2, 3/3, 5/2, 7/1, 8/4, 6/6, 4/7, 2/6, 1/8,
-                       3/9, 5/8, 7/8, 9/7, 1/4, 4/4, 6/4, 8/2, 2/1,
-                       5/5, 7/5, 3/1, 9/3, 9/5, 5/9, 2/3} {
-      \filldraw[QCIcol1] (\x,\y) circle (2pt);
-    }
-    \draw[->,thin] (0,0) -- (10.5,0) node[right,font=\footnotesize] {x (km)};
-    \draw[->,thin] (0,0) -- (0,10.5) node[above,font=\footnotesize] {y (km)};
-    \node[font=\footnotesize] at (5,-0.6) {25 antennas; interference radius 2.5\,km};
-  \end{tikzpicture}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{figures/antenna_network.pdf}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \begin{itemize}\small
+        \item 25 antennas, uniform in 10\,km box (rng seed 7).
+        \item Interference radius 2.5\,km $\Rightarrow$ 44 edges.
+        \item BFS from the highest-degree antenna picks a connected
+              12-vertex subgraph that we use as the head-to-head test
+              case on the next slide.
+      \end{itemize}
 
-  \medskip
-  \footnotesize
-  Selected by BFS from the highest-degree antenna: a 12-vertex
-  connected subgraph used as the head-to-head test case below.
+      \medskip
+      \footnotesize
+      All three solvers run on the same induced subgraph; the
+      visualisation below shows their colorings side by side.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The 12-antenna subgraph}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{figures/antenna_subgraph_12.pdf}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \medskip
+      \begin{itemize}\small
+        \item 12 antennas, 27 interference edges.
+        \item Dense enough that greedy heuristics over-allocate.
+        \item Small enough that direct MILP closes optimally in tens of
+              milliseconds.
+        \item Big enough that the column-generation pricing subproblem
+              is non-trivial: ~25--30 maximal ISs.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Three solvers, one subgraph}
@@ -380,8 +403,20 @@
   \end{tikzpicture}
 
   \medskip
-  All three run on the 12-vertex antenna subgraph; the table on the next
-  slide shows the head-to-head result.
+  \footnotesize
+  All three run on the same 12-vertex subgraph. The next slide overlays
+  each method's coloring on the antenna layout.
+\end{frame}
+
+\begin{frame}{Side-by-side coloring}
+  \centering
+  \includegraphics[width=0.99\textwidth]{figures/coloring_3way.pdf}
+
+  \medskip
+  \footnotesize
+  All three methods find the proven optimum \alert{$\chi = 6$}. They
+  assign different vertices to different colors (the labelling is
+  arbitrary) but every coloring is valid and uses 6 frequencies.
 \end{frame}
 
 \begin{frame}{Head-to-head on the 12-antenna subgraph}
@@ -446,7 +481,7 @@
 
   \vspace{0.4em}
   \footnotesize
-  Notebook: \texttt{notebooks/06\_tutorial\_end\_to\_end.ipynb}\\
+  Notebook: \texttt{notebooks/04\_tutorial\_end\_to\_end.ipynb}\\
   Deep dive: \texttt{notebooks/slides/deep\_dive/deep\_dive.pdf}\\
   References: arXiv:2301.02637 (Coelho et al.)
 \end{frame}

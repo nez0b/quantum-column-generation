@@ -12,7 +12,7 @@ notebooks/
 ├── 02b_column_generation_realtime.ipynb ← CG on your graph + live Dirac
 ├── 03a_application_demo_replay.ipynb    ← six-solver pipeline on bundled data
 ├── 03b_application_demo_realtime.ipynb  ← six-solver pipeline on your graph
-├── 06_tutorial_end_to_end.ipynb         ← single-file end-to-end tutorial
+├── 04_tutorial_end_to_end.ipynb         ← single-file end-to-end tutorial
 ├── _demo_utils.py                       ← shared helpers
 ├── pyproject.toml / .python-version     ← portable env (uv-managed)
 ├── data_bundle/                         ← vendored replay data (~220 KB)
@@ -52,9 +52,9 @@ adds `../src` to `sys.path` if the editable install isn't present.
 | `02b_column_generation_realtime.ipynb` | Same content on **your** graph + live Dirac. Saves run for offline replay. | Yes (cloud or direct) |
 | `03a_application_demo_replay.ipynb` | Six-solver pipeline comparison on bundled data. | No |
 | `03b_application_demo_realtime.ipynb` | Same comparison live, on your graph. | Yes (cloud or direct) |
-| `06_tutorial_end_to_end.ipynb` | Self-contained single-notebook walkthrough — classical CG, quantum CG, direct MILP on a synthetic antenna instance. | Optional (cloud default) |
+| `04_tutorial_end_to_end.ipynb` | Self-contained single-notebook walkthrough — classical CG, quantum CG, direct MILP on a synthetic antenna instance. | Optional (cloud default) |
 
-**Recommended reading order for new colleagues:** `06` (single-notebook
+**Recommended reading order for new colleagues:** `04` (single-notebook
 end-to-end) → `01` (theory deep dive) → `02a / 02b` (algorithm step) →
 `03a / 03b` (pipeline comparison).
 
@@ -65,7 +65,7 @@ end-to-end) → `01` (theory deep dive) → `02a / 02b` (algorithm step) →
 | Deck | File | Audience | Pages |
 |---|---|---|---|
 | Deep dive | `slides/deep_dive/deep_dive.pdf` | Technical (engineering / research). Mirrors notebooks 01–03. | 24 |
-| Tutorial | `slides/tutorial/tutorial.pdf` | Technical customer. Mirrors notebook 06. | 14 |
+| Tutorial | `slides/tutorial/tutorial.pdf` | Technical customer. Mirrors notebook 04. | 14 |
 | Overview | `slides/overview/overview.pdf` | High-level customer / executive pitch. No math. | 9 |
 
 All decks use the canonical QCi beamer template (Madrid theme,
@@ -107,11 +107,36 @@ order, never overwriting an already-set env var:
 If a variable is still missing, the notebook prompts interactively
 (token via `getpass`, URL/IP via plain `input`).
 
+### Optional: Hexaly ILP solver
+
+Notebooks `03a`, `03b`, and `04` include **Hexaly** as a fast
+commercial-grade direct ILP baseline alongside the always-available
+HiGHS solver. Hexaly is licensed and not pip-installable; if it isn't
+available the notebook cell prints a skip message and continues.
+
+To enable Hexaly:
+
+1. Download from [hexaly.com](https://www.hexaly.com/) (requires
+   license) and install to `/opt/hexaly_14_5/` (or similar).
+2. Set environment in each shell where you run the notebooks:
+   ```bash
+   export PYTHONPATH=/opt/hexaly_14_5/bin/python:$PYTHONPATH
+   # macOS:
+   export DYLD_LIBRARY_PATH=/opt/hexaly_14_5/bin:$DYLD_LIBRARY_PATH
+   # Linux:
+   # export LD_LIBRARY_PATH=/opt/hexaly_14_5/bin:$LD_LIBRARY_PATH
+   ```
+3. Place the license at `/opt/hexaly_14_5/license.dat`.
+4. Launch `jupyter lab` from the same shell.
+
+`pyproject.toml` carries a `hexaly` placeholder extra solely to record
+the intent — there is no PyPI wheel to install.
+
 ---
 
 ## Saving live runs locally
 
-Realtime notebooks (`02b`, `03b`, and `06` when not in replay) default
+Realtime notebooks (`02b`, `03b`, and `04` when not in replay) default
 to `SAVE_RUN = True` and write each Dirac call to
 `runs/<UTC-timestamp>_<label>/`:
 
@@ -178,7 +203,7 @@ assignments become no-ops and can be removed.
 
 * All five "core" notebooks (01, 02a, 03a, 02b/03b in replay) execute
   cleanly with `errors=0` via `jupyter nbconvert --execute`.
-* `06_tutorial_end_to_end.ipynb` runs end-to-end against the QCi cloud
+* `04_tutorial_end_to_end.ipynb` runs end-to-end against the QCi cloud
   API (defaults to `BACKEND="cloud"`), reproducing χ = 6 on a
   12-antenna synthetic subgraph in ~50 s total wallclock.
 * Replay mode is genuinely offline — it monkey-patches both
