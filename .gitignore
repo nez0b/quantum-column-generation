@@ -69,6 +69,21 @@ notebooks/runs/*
 notebooks/.venv/
 notebooks/uv.lock
 
+# Beamer build artifacts under notebooks/slides/ (keep the .tex and .pdf,
+# drop the LaTeX scratch files)
+notebooks/slides/**/*.aux
+notebooks/slides/**/*.log
+notebooks/slides/**/*.nav
+notebooks/slides/**/*.snm
+notebooks/slides/**/*.toc
+notebooks/slides/**/*.out
+notebooks/slides/**/*.synctex.gz
+notebooks/slides/**/*.vrb
+
+# The global `*.png` rule above hides the QCi logo PNG that beamer-qci needs.
+# Re-include logo PNGs the slide decks depend on.
+!notebooks/slides/**/QCILogoWhite.png
+
 # Datasets
 datasets/
 

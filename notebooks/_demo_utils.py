@@ -47,10 +47,22 @@ NOTEBOOKS_DIR = REPO_ROOT / "notebooks"
 NOTEBOOK_DATA_DIR = NOTEBOOKS_DIR / "data"
 NOTEBOOK_RUNS_DIR = NOTEBOOKS_DIR / "runs"
 SLIDES_DEMO_DIR = REPO_ROOT / "RF-branching" / "slides" / "qcg_vs_cg_demo"
-SLIDES_DATA_DIR = SLIDES_DEMO_DIR / "data"
-RAW_SAMPLES_ROOT = REPO_ROOT / "RF-branching" / "instances"
+
+# Prefer the vendored data inside notebooks/ so the bundle ships standalone.
+# Fall back to the parent repo's RF-branching layout for developers working
+# inside the full repo without data_bundle/.
+_DATA_BUNDLE = NOTEBOOKS_DIR / "data_bundle"
 DEFAULT_BUNDLED_INSTANCE = "er_n20_p70_s0"
 DEFAULT_BUNDLED_METHOD = "qcg"
+
+SLIDES_DATA_DIR = (
+    _DATA_BUNDLE if (_DATA_BUNDLE / "psp_01.json").exists()
+    else SLIDES_DEMO_DIR / "data"
+)
+RAW_SAMPLES_ROOT = (
+    _DATA_BUNDLE if (_DATA_BUNDLE / DEFAULT_BUNDLED_INSTANCE).is_dir()
+    else REPO_ROOT / "RF-branching" / "instances"
+)
 
 # Make src/ importable for when the notebooks are run with the project venv.
 if str(REPO_ROOT / "src") not in sys.path:

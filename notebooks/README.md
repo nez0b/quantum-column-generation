@@ -1,15 +1,79 @@
-# `notebooks/` — Quantum Column Generation tutorial series
+# QCG Tutorial Bundle
 
-Five notebooks walk through the algorithm from the underlying Motzkin-Straus
-QP up to a full industry-style pipeline comparison.
+End-to-end tutorial **and** companion slide decks for QCi's quantum
+column-generation pipeline for graph coloring. Self-contained: notebooks
+run on bundled replay data without device access; slides ship as
+pre-built PDFs.
 
-| Notebook | Topic | API access? |
+```
+notebooks/
+├── 01_motzkin_straus.ipynb              ← theory: MS QP + Dirac as sampler
+├── 02a_column_generation_replay.ipynb   ← CG walkthrough on bundled data
+├── 02b_column_generation_realtime.ipynb ← CG on your graph + live Dirac
+├── 03a_application_demo_replay.ipynb    ← six-solver pipeline on bundled data
+├── 03b_application_demo_realtime.ipynb  ← six-solver pipeline on your graph
+├── 06_tutorial_end_to_end.ipynb         ← single-file end-to-end tutorial
+├── _demo_utils.py                       ← shared helpers
+├── pyproject.toml / .python-version     ← portable env (uv-managed)
+├── data_bundle/                         ← vendored replay data (~220 KB)
+├── slides/                              ← three beamer-qci PDFs + sources
+└── runs/                                ← gitignored; live-mode captures
+```
+
+---
+
+## Quick start
+
+```bash
+cd notebooks
+uv venv                # creates notebooks/.venv (Python 3.12)
+uv sync                # cloud-only deps
+uv sync --extra direct # add eqc-direct for on-prem mode (optional)
+uv run jupyter lab .
+```
+
+Or from the parent repo root, sharing the project venv:
+
+```bash
+uv run jupyter lab notebooks/
+```
+
+Both work because `_demo_utils.py` resolves paths from `__file__` and
+adds `../src` to `sys.path` if the editable install isn't present.
+
+---
+
+## Notebook index
+
+| Notebook | Topic | Live API needed? |
 |---|---|---|
-| `01_motzkin_straus.ipynb` | The QP at the heart of every Dirac call. SLSQP vs Dirac on a small graph. | Optional (replay default) |
-| `02a_column_generation_replay.ipynb` | CG step-by-step on bundled ER(20, 0.7) data. | None |
+| `01_motzkin_straus.ipynb` | Motzkin-Straus QP and Dirac-3 as a clique sampler. SLSQP vs Dirac on a small graph. | Optional (replay default) |
+| `02a_column_generation_replay.ipynb` | Column generation step-by-step on bundled ER(20, 0.7) data. | No |
 | `02b_column_generation_realtime.ipynb` | Same content on **your** graph + live Dirac. Saves run for offline replay. | Yes (cloud or direct) |
-| `03a_application_demo_replay.ipynb` | Six-solver pipeline comparison on bundled data. | None (uses replay) |
+| `03a_application_demo_replay.ipynb` | Six-solver pipeline comparison on bundled data. | No |
 | `03b_application_demo_realtime.ipynb` | Same comparison live, on your graph. | Yes (cloud or direct) |
+| `06_tutorial_end_to_end.ipynb` | Self-contained single-notebook walkthrough — classical CG, quantum CG, direct MILP on a synthetic antenna instance. | Optional (cloud default) |
+
+**Recommended reading order for new colleagues:** `06` (single-notebook
+end-to-end) → `01` (theory deep dive) → `02a / 02b` (algorithm step) →
+`03a / 03b` (pipeline comparison).
+
+---
+
+## Slide decks (`slides/`)
+
+| Deck | File | Audience | Pages |
+|---|---|---|---|
+| Deep dive | `slides/deep_dive/deep_dive.pdf` | Technical (engineering / research). Mirrors notebooks 01–03. | 24 |
+| Tutorial | `slides/tutorial/tutorial.pdf` | Technical customer. Mirrors notebook 06. | 14 |
+| Overview | `slides/overview/overview.pdf` | High-level customer / executive pitch. No math. | 9 |
+
+All decks use the canonical QCi beamer template (Madrid theme,
+QCi colors, Raleway font). Rebuild any deck with its local `build.sh`,
+or `make -C notebooks/slides` for all three. See
+`slides/README.md` for details.
+
+---
 
 ## Backend modes
 
@@ -20,23 +84,19 @@ BACKEND = "replay"   # "replay" | "cloud" | "direct"
 ```
 
 * **`replay`** — reads pre-recorded raw samples from
-  `RF-branching/instances/<iid>/<method>/raw_samples/call_*.pkl`. No
-  credentials required. The bundled instance is `er_n20_p70_s0` (20-vertex
-  ER graph, edge probability 0.7, seed 0).
+  `data_bundle/<iid>/<method>/raw_samples/call_*.pkl`. No credentials
+  required. The bundled instance is `er_n20_p70_s0`.
 * **`cloud`** — submits to the QCi cloud API via
   `eqc_models.solvers.Dirac3ContinuousCloudSolver`. Requires **both**
   `QCI_TOKEN` and `QCI_API_URL` (default `https://api.qci-prod.com`).
 * **`direct`** — submits to on-prem Dirac-3 hardware via the gRPC
-  `eqc-direct` package, which the project wraps inside
-  `quantum_colgen.pricing.dirac_oracle.DiracPricingOracle(backend="direct")`.
-  Requires `EQC_DIRECT_IP_ADDRESS` (skill default `172.18.41.79`) and
-  `EQC_DIRECT_PORT` (default `50051`); `EQC_DIRECT_CERT_FILE` is optional.
+  `eqc-direct` package. Requires `EQC_DIRECT_IP_ADDRESS` (default
+  `172.18.41.228`) and `EQC_DIRECT_PORT` (default `50051`).
 
 ### Credential resolution order
 
-`_demo_utils.load_dotenv_if_present()` is called by every realtime
-notebook before any Dirac instantiation. It looks for `.env` files in
-this order, never overwriting an already-set env var:
+`_demo_utils.load_dotenv_if_present()` searches for `.env` files in this
+order, never overwriting an already-set env var:
 
 1. `./.env` (repo root)
 2. `./quantum-branch-price/.env`
@@ -44,72 +104,58 @@ this order, never overwriting an already-set env var:
 4. `~/Code/qci/skills/qci-eqc-models/.env`
 5. `~/Code/qci/skills/max-clique-skills/.env`
 
-For testing, the bundled QCi skills carry working cloud creds at
-`~/Code/qci/skills/qci-eqc-models/.env` (`QCI_API_URL` +
-`QCI_TOKEN`). If a needed variable is still missing after env loading,
-the notebook prompts the user interactively (token via `getpass`,
-URL/IP via plain `input`).
+If a variable is still missing, the notebook prompts interactively
+(token via `getpass`, URL/IP via plain `input`).
+
+---
 
 ## Saving live runs locally
 
-Realtime notebooks (`02b`, `03b`) default to `SAVE_RUN = True` and write
-each Dirac call to `notebooks/runs/<UTC-timestamp>_<label>/`:
+Realtime notebooks (`02b`, `03b`, and `06` when not in replay) default
+to `SAVE_RUN = True` and write each Dirac call to
+`runs/<UTC-timestamp>_<label>/`:
 
 ```
-notebooks/runs/20260508T172500Z_cg_cloud/
-├── graph.json                         # instance metadata
+runs/20260508T172500Z_cg_cloud/
+├── graph.json
 ├── raw_samples/
-│   ├── index.jsonl                    # one entry per Dirac call
-│   └── call_00000.pkl ... call_NN.pkl # raw solution vectors
-└── comparison.json                    # (03b only) solver stats table
+│   ├── index.jsonl
+│   └── call_00000.pkl ... call_NN.pkl
+└── comparison.json     # (03b only) solver stats
 ```
 
-The pickle schema is binary-compatible with `RF-branching/instances/`, so
-the same `ReplayDiracOracle` works on both. To rerun a saved run offline:
+The pickle schema is binary-compatible with `data_bundle/`, so the same
+`ReplayDiracOracle` works on both. To replay a saved run offline:
 
 ```python
 import _demo_utils as U
-oracle = U.replay_oracle_from_run("notebooks/runs/20260508T172500Z_cg_cloud")
+oracle = U.replay_oracle_from_run("runs/20260508T172500Z_cg_cloud")
 ```
 
-`notebooks/runs/` is gitignored.
+`runs/` is gitignored.
 
-## Running the notebooks
+---
 
-`notebooks/` is a self-contained `uv` project with its own `pyproject.toml`
-that pulls the parent package as an editable dependency. **Recommended**:
+## Bundled data (`data_bundle/`)
 
-```bash
-cd notebooks
-uv venv             # creates notebooks/.venv (Python 3.12 by default)
-uv sync             # cloud-only deps (jupyter + eqc-models + quantum-colgen)
-uv sync --extra direct      # add eqc-direct for on-prem mode
-uv run jupyter lab .         # launch
-```
+~220 KB of vendored replay data. The notebooks transparently prefer this
+folder; if a developer has the full parent repo and `data_bundle/` is
+absent, `_demo_utils.py` falls back to `../RF-branching/...`. See
+`data_bundle/README.md` for the file-by-file provenance.
 
-Or, from the repo root, share the parent venv:
+The bundled instance is **ER(20, 0.7, seed=0)** — 20 vertices, 131
+edges, chromatic number 8. A full CG run replays in ~200 ms vs ~9
+minutes on the original device.
 
-```bash
-uv run jupyter lab notebooks/
-```
+---
 
-Both work because `_demo_utils.py` resolves paths from `__file__` and
-adds `../src` to `sys.path` if the editable install isn't present.
-
-The notebooks share a single Python module, `notebooks/_demo_utils.py`,
-which provides path resolution, visualization helpers, the
-`make_dirac_oracle(mode=...)` factory, the `CapturingPricingOracle`
-wrapper, the `ReplayDiracOracle` shim that monkey-patches the cloud
-solver inside `quantum_colgen.pricing.dirac_oracle`, and three
-**direct-backend bug workarounds** (see below).
-
-### Direct-backend workarounds (May 2026)
+## Direct-backend workarounds (May 2026)
 
 Three issues in the upstream `quantum_colgen.pricing.dirac_oracle`
 direct path are patched at notebook import time by `_demo_utils.py`:
 
-1. **Wrong default IP**: skill docs say `172.18.41.79`, but that endpoint
-   is offline; current production hardware is `172.18.41.228:50051`.
+1. **Wrong default IP**: skill docs say `172.18.41.79`, but that
+   endpoint is offline; the working address is `172.18.41.228:50051`.
 2. **Port type**: `_resolve_direct_config` casts to `int`, but
    `eqc_direct.client.EqcClient` requires `port` as a `str`.
 3. **Lock-id discarded**: `_direct_solve_qp` calls `wait_for_lock()` but
@@ -123,26 +169,19 @@ direct path are patched at notebook import time by `_demo_utils.py`:
 
 These patches live in `_install_direct_workarounds()` and run lazily the
 first time `make_dirac_oracle("direct")` is called. They mutate the
-imported `dirac_oracle` module in-place; if the upstream package is
-fixed, the patches become no-ops on the assignment line and can be
-removed.
+imported `dirac_oracle` module in-place; if upstream is fixed, the
+assignments become no-ops and can be removed.
 
-## Bundled data
+---
 
-The `01`/`02a`/`03a` notebooks read these read-only artifacts (already
-committed under `RF-branching/`):
+## Verified behavior
 
-* `RF-branching/slides/qcg_vs_cg_demo/data/psp_{01,02}.json` — per-PSP
-  bundles with graph topology, dual weights, Dirac columns, LP columns,
-  and Kamada-Kawai layouts.
-* `RF-branching/instances/er_n20_p70_s0/{cg,qcg,bp_isf,...}/raw_samples/`
-  — pickled raw Dirac samples for the bundled instance, used by
-  `ReplayDiracOracle` to replay full CG runs offline.
-
-## Verified replay behaviour
-
-Replay mode is genuinely offline — it monkey-patches both
-`_dirac_solve_qp` (used by `method="filter"`) and the
-`Dirac3ContinuousCloudSolver` class symbol (used directly by
-`method="gibbons"`). On the bundled ER(20, 0.7) instance a full CG run
-replays in ~200 ms vs ~9 minutes on the original device.
+* All five "core" notebooks (01, 02a, 03a, 02b/03b in replay) execute
+  cleanly with `errors=0` via `jupyter nbconvert --execute`.
+* `06_tutorial_end_to_end.ipynb` runs end-to-end against the QCi cloud
+  API (defaults to `BACKEND="cloud"`), reproducing χ = 6 on a
+  12-antenna synthetic subgraph in ~50 s total wallclock.
+* Replay mode is genuinely offline — it monkey-patches both
+  `_dirac_solve_qp` (used by `method="filter"`) and the
+  `Dirac3ContinuousCloudSolver` class symbol (used directly by
+  `method="gibbons"`).
